@@ -1,9 +1,9 @@
 <?php
 
-namespace CodeTech\EuPago\MB;
+namespace DigitaldevLx\LaravelEupago\MB;
 
 use Carbon\Carbon;
-use CodeTech\EuPago\EuPago;
+use DigitaldevLx\LaravelEupago\EuPago;
 use GuzzleHttp\Client;
 
 class MB extends EuPago

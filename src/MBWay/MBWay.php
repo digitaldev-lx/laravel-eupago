@@ -1,8 +1,8 @@
 <?php
 
-namespace CodeTech\EuPago\MBWay;
+namespace DigitaldevLx\LaravelEupago\MBWay;
 
-use CodeTech\EuPago\EuPago;
+use DigitaldevLx\LaravelEupago\EuPago;
 use GuzzleHttp\Client;
 
 class MBWay extends EuPago

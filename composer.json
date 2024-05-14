@@ -24,7 +24,7 @@
   },
   "autoload": {
     "psr-4": {
-      "CodeTech\\EuPago\\": "src/"
+      "DigitaldevLx\\LaravelEupago\\": "src/"
     }
   },
   "minimum-stability": "dev",
@@ -32,7 +32,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "CodeTech\\EuPago\\Providers\\EuPagoServiceProvider"
+        "DigitaldevLx\\LaravelEupago\\Providers\\EuPagoServiceProvider"
       ]
     }
   }

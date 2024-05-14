@@ -1,10 +1,10 @@
 <?php
 
-namespace CodeTech\EuPago\Http\Controllers;
+namespace DigitaldevLx\LaravelEupago\Http\Controllers;
 
-use CodeTech\EuPago\Events\MBReferencePaid;
-use CodeTech\EuPago\Http\Requests\MbCallbackRequest;
-use CodeTech\EuPago\Models\MbReference;
+use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
+use DigitaldevLx\LaravelEupago\Http\Requests\MbCallbackRequest;
+use DigitaldevLx\LaravelEupago\Models\MbReference;
 
 class MBController extends Controller
 {

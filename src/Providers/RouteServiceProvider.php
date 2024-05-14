@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeTech\EuPago\Providers;
+namespace DigitaldevLx\LaravelEupago\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -14,7 +14,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected $namespace = 'CodeTech\EuPago\Http\Controllers';
+    protected $namespace = 'DigitaldevLx\LaravelEupago\Http\Controllers';
 
     /**
      * The path to the "home" route for your application.
