@@ -53,7 +53,7 @@ environment when your application is ready for production.
 
 For creating a MB reference, take the following example:
 ```
-use CodeTech\EuPago\MB\MB;
+use DigitaldevLx\LaravelEupago\MB\MB;
 
 $order = Order::find(1);
 
@@ -97,7 +97,7 @@ Use the trait on the models for which you want to generate MB references:
 
 ```
 
-use CodeTech\EuPago\Traits\Mbable;
+use DigitaldevLx\LaravelEupago\Traits\Mbable;
 
 class Order extends Model
 {
@@ -148,7 +148,7 @@ Use the trait on the models for which you want to generate MB Way references:
 
 ```
 
-use CodeTech\EuPago\Traits\Mbwayable;
+use DigitaldevLx\LaravelEupago\Traits\Mbwayable;
 
 class Order extends Model
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace CodeTech\EuPago\Traits;
+namespace DigitaldevLx\LaravelEupago\Traits;
 
-use CodeTech\EuPago\Models\MbwayReference;
+use DigitaldevLx\LaravelEupago\Models\MbwayReference;
 
 trait Mbwayable
 {

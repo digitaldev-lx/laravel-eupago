@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeTech\EuPago\Http\Requests;
+namespace DigitaldevLx\LaravelEupago\Http\Requests;
 
 use Illuminate\Validation\Rule;
 

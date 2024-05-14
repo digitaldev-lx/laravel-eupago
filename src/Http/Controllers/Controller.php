@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeTech\EuPago\Http\Controllers;
+namespace DigitaldevLx\LaravelEupago\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;

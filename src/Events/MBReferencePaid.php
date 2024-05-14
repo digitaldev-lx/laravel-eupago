@@ -1,8 +1,8 @@
 <?php
 
-namespace CodeTech\EuPago\Events;
+namespace DigitaldevLx\LaravelEupago\Events;
 
-use CodeTech\EuPago\Models\MbReference;
+use DigitaldevLx\LaravelEupago\Models\MbReference;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;

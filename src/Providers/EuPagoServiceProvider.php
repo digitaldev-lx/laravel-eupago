@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeTech\EuPago\Providers;
+namespace DigitaldevLx\LaravelEupago\Providers;;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -46,7 +46,7 @@ class EuPagoServiceProvider extends ServiceProvider
      */
     private function setProviders()
     {
-        $this->app->register('CodeTech\EuPago\Providers\RouteServiceProvider');
+        $this->app->register('DigitaldevLx\LaravelEupago\Providers\RouteServiceProvider');
     }
 
     /**

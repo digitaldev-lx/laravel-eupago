@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeTech\EuPago\Models;
+namespace DigitaldevLx\LaravelEupago\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

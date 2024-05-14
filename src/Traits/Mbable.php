@@ -1,10 +1,10 @@
 <?php
 
-namespace CodeTech\EuPago\Traits;
+namespace DigitaldevLx\LaravelEupago\Traits;
 
 use Carbon\Carbon;
-use CodeTech\EuPago\MB\MB;
-use CodeTech\EuPago\Models\MbReference;
+use DigitaldevLx\LaravelEupago\MB\MB;
+use DigitaldevLx\LaravelEupago\Models\MbReference;
 
 trait Mbable
 {
