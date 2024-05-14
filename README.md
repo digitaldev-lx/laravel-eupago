@@ -2,7 +2,7 @@
 
 # Laravel EuPago
 
-A Laravel package for making payments through the EuPago API.
+A Laravel package for making payments through the EuPago API based in CodeTech's laravel-eupago package. Well Done CodeTech's Team.
 
 [![Latest version](https://img.shields.io/github/release/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/releases)
 [![GitHub license](https://img.shields.io/github/license/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/blob/master/LICENSE)
