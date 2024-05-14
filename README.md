@@ -197,7 +197,7 @@ GET
 **digitaldev-lx/laravel-eupago** is open-sourced software licensed under the [MIT license](https://github.com/CodeTechAgency/laravel-eupago/blob/master/LICENSE).
 
 
-## About CodeTech
+## About DigitalDev
 
 [DigitalDev](https://www.digitaldev.pt) is a web development agency based on Lisbon, Portugal. We specialize in Laravel, Livewire, and Tailwind CSS.
 [Codeboys](https://www.codeboys.pt) is our special partner and we work together to deliver the best solutions for our clients.
