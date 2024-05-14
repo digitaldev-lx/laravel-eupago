@@ -1,25 +1,22 @@
 ![laravel-eupago-repo-banner](https://user-images.githubusercontent.com/17640929/161711354-03727be1-88cb-49df-ad58-494a61606e0b.png)
 
-
 # Laravel EuPago
 
 A Laravel package for making payments through the EuPago API.
 
-[![Latest version](https://img.shields.io/github/release/CodeTechAgency/laravel-eupago?style=flat-square)](https://github.com/CodeTechAgency/laravel-eupago/releases)
-[![GitHub license](https://img.shields.io/github/license/CodeTechAgency/laravel-eupago?style=flat-square)](https://github.com/CodeTechAgency/laravel-eupago/blob/master/LICENSE)
-
+[![Latest version](https://img.shields.io/github/release/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/releases)
+[![GitHub license](https://img.shields.io/github/license/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/blob/master/LICENSE)
 
 ## Installation
 
-
-Install the PHP dependency
-```
-composer require codetech/laravel-eupago
+Install the PHP dependency:
+```bash
+composer require digitaldev-lx/laravel-eupago
 ```
 
 Publish the migration
 ```
-php artisan vendor:publish --provider=CodeTech\\EuPago\\Providers\\EuPagoServiceProvider --tag=migrations
+php artisan vendor:publish --provider=DigitaldevLx\\LaravelEupago\\Providers\\EuPagoServiceProvider --tag=migrations
 ```
 
 Run the migration
@@ -29,12 +26,12 @@ php artisan migrate
 
 Publish the configuration file (optional)
 ```
-php artisan vendor:publish --provider=CodeTech\\EuPago\\Providers\\EuPagoServiceProvider --tag=config
+php artisan vendor:publish --provider=DigitaldevLx\\LaravelEupago\\Providers\\EuPagoServiceProvider --tag=config
 ```
 
 Publish the translations files (optional)
 ```
-php artisan vendor:publish --provider=CodeTech\\EuPago\\Providers\\EuPagoServiceProvider --tag=translations
+php artisan vendor:publish --provider=DigitaldevLx\\LaravelEupago\\Providers\\EuPagoServiceProvider --tag=translations
 ```
 
 
@@ -197,9 +194,11 @@ GET
 
 ## License
 
-**codetech/laravel-eupago** is open-sourced software licensed under the [MIT license](https://github.com/CodeTechAgency/laravel-eupago/blob/master/LICENSE).
+**digitaldev-lx/laravel-eupago** is open-sourced software licensed under the [MIT license](https://github.com/CodeTechAgency/laravel-eupago/blob/master/LICENSE).
 
 
 ## About CodeTech
 
-[CodeTech](https://www.codetech.pt) is a web development agency based on Matosinhos, Portugal. Oh, and we LOVE Laravel!
+[DigitalDev](https://www.digitaldev.pt) is a web development agency based on Lisbon, Portugal. We specialize in Laravel, Livewire, and Tailwind CSS.
+[Codeboys](https://www.codeboys.pt) is our special partner and we work together to deliver the best solutions for our clients.
+
