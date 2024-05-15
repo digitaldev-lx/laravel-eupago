@@ -36,6 +36,6 @@ class MBReferencePaid
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel(config('eupago.channel'));
     }
 }
