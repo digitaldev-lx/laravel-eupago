@@ -194,7 +194,7 @@ GET
 
 ## License
 
-**digitaldev-lx/laravel-eupago** is open-sourced software licensed under the [MIT license](https://github.com/CodeTechAgency/laravel-eupago/blob/master/LICENSE).
+**digitaldev-lx/laravel-eupago** is open-sourced software licensed under the [MIT license](https://github.com/digitaldev-lx/laravel-eupago/blob/master/LICENSE).
 
 
 ## About DigitalDev
