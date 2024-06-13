@@ -112,7 +112,7 @@ $mbReferences = $order->mbReferences;
 
 #### Callback
 
-The package already handles the callback, updating the payment reference state and triggering an `MBWayReferencePaid` event.
+The package already handles the callback, updating the payment reference state and triggering an `MBReferencePaid` event.
 
 ```
 GET
