@@ -74,18 +74,18 @@ class MB extends EuPago
      *
      * @param float $value
      * @param string $id
-     * @param Carbon $startDate
-     * @param Carbon $endDate
+     * @param string $startDate
+     * @param string $endDate
      * @param float $minValue
      * @param float $maxValue
      * @param bool $allowDuplication
      */
-    public function __construct(float $value, string $id, Carbon $startDate, Carbon $endDate, float $minValue, float $maxValue, bool $allowDuplication = false)
+    public function __construct(float $value, string $id, string $startDate, string $endDate, float $minValue, float $maxValue, bool $allowDuplication = false)
     {
         $this->value            = $value;
         $this->id               = $id;
-        $this->startDate        = $startDate->format('Y-m-d');
-        $this->endDate          = $endDate->format('Y-m-d');
+        $this->startDate        = $startDate;
+        $this->endDate          = $endDate;
         $this->minValue         = $minValue;
         $this->maxValue         = $maxValue;
         $this->allowDuplication = $allowDuplication;
@@ -131,14 +131,10 @@ class MB extends EuPago
     public function create(): array
     {
         $client = new Client(['base_uri' => $this->getBaseUri()]);
-        logger()->info('URL: ' . self::URI);
-        logger()->info('Params: ' . $this->getParams());
+        
         try {
             $response = $client->post(self::URI, $this->getParams());
-            logger()->info('RESPONSE: ' . $response->getBody()->getContents());
         } catch (\Exception $e) {
-            logger()->info('ERROR: ' . $e->getMessage());
-
             throw $e;
         }
 
