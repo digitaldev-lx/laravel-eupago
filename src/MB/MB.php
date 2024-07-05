@@ -131,10 +131,14 @@ class MB extends EuPago
     public function create(): array
     {
         $client = new Client(['base_uri' => $this->getBaseUri()]);
-
+        logger()->info('URL: ' . self::URI);
+        logger()->info('Params: ' . $this->getParams());
         try {
             $response = $client->post(self::URI, $this->getParams());
+            logger()->info('RESPONSE: ' . $response->getBody()->getContents());
         } catch (\Exception $e) {
+            logger()->info('ERROR: ' . $e->getMessage());
+
             throw $e;
         }
 
