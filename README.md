@@ -122,19 +122,19 @@ GET
 
 ####Params
 
-| Name          | Type      |
-|---------------|:---------:|
-| valor         | float     |
-| canal         | string    |
-| referencia    | string    |
-| transacao     | string    |
-| identificador | integer   |
-| mp            | string    |
-| chave_api     | string    |
-| data          | date time |
-| entidade      | string    |
-| comissao      | float     |
-| local         | string    |
+| Name          |     Type     |
+|---------------|:------------:|
+| valor         |    float     |
+| canal         |    string    |
+| referencia    |    string    |
+| transacao     |    string    |
+| identificador |   integer    |
+| mp            |    string    |
+| chave_api     |    string    |
+| data          | string:Y-m-d |
+| entidade      |    string    |
+| comissao      |    float     |
+| local         |    string    |
 
 
 ### MB Way References
@@ -173,19 +173,19 @@ GET
 
 ####Params
 
-| Name          | Type      |
-|---------------|:---------:|
-| valor         | float     |
-| canal         | string    |
-| referencia    | string    |
-| transacao     | string    |
-| identificador | integer   |
-| mp            | string    |
-| chave_api     | string    |
-| data          | date time |
-| entidade      | string    |
-| comissao      | float     |
-| local         | string    |
+| Name          |     Type     |
+|---------------|:------------:|
+| valor         |    float     |
+| canal         |    string    |
+| referencia    |    string    |
+| transacao     |    string    |
+| identificador |   integer    |
+| mp            |    string    |
+| chave_api     |    string    |
+| data          | string-Y-m-d |
+| entidade      |    string    |
+| comissao      |    float     |
+| local         |    string    |
 
 
 
