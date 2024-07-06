@@ -131,7 +131,7 @@ class MB extends EuPago
     public function create(): array
     {
         $client = new Client(['base_uri' => $this->getBaseUri()]);
-        
+
         try {
             $response = $client->post(self::URI, $this->getParams());
         } catch (\Exception $e) {
@@ -178,14 +178,14 @@ class MB extends EuPago
     {
         return [
             'form_params' => [
-                'chave' => config('eupago.api_key'),
-                'valor' => $this->value,
-                'id' => $this->id,
-                'data_inicio' => $this->startDate,
-                'data_fim' => $this->endDate,
-                'valor_minimo' => $this->minValue,
-                'valor_maximo' => $this->maxValue,
-                'per_dup' => $this->allowDuplication,
+                'chave' => "'".config('eupago.api_key')."'",
+                'valor' => "'".$this->value."'",
+                'id' => "'".$this->id."'",
+                'data_inicio' => "'".$this->startDate."'",
+                'data_fim' => "'".$this->endDate."'",
+                'valor_minimo' => "'".$this->minValue."'",
+                'valor_maximo' => "'".$this->maxValue."'",
+                'per_dup' => "'".$this->allowDuplication."'",
             ]
         ];
     }
