@@ -18,6 +18,7 @@ class MbReference extends Model
         'min_value',
         'max_value',
         'state',
+        'transaction_id'
     ];
 
     /**

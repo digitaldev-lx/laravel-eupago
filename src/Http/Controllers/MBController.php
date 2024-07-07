@@ -20,6 +20,7 @@ class MBController extends Controller
 
         $reference = MbReference::where('reference', $validatedData['referencia'])
             ->where('value', $validatedData['valor'])
+            ->where('transaction_id', $validatedData['transacao'])
             ->where('state', 0)
             ->first();
 
@@ -29,7 +30,6 @@ class MBController extends Controller
 
         $reference->update(['state' => 1]);
 
-        // trigger event
         event(new MBReferencePaid($reference));
 
         return response()->json(['response' => 'Success'])->setStatusCode(200);

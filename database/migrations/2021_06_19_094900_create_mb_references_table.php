@@ -23,6 +23,7 @@ class CreateMbReferencesTable extends Migration
             $table->decimal('min_value', 10, 2);
             $table->decimal('max_value', 10, 2);
             $table->integer('state');
+            $table->string('transaction_id')->nullable();
             $table->morphs('mbable');
             $table->timestamps();
         });
