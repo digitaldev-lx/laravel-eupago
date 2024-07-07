@@ -176,17 +176,18 @@ class MB extends EuPago
      */
     protected function getParams(): array
     {
-        return [
+        return $data = [
             'form_params' => [
-                'chave' => "'".config('eupago.api_key')."'",
-                'valor' => "'".$this->value."'",
-                'id' => "'".$this->id."'",
-                'data_inicio' => "'".$this->startDate."'",
-                'data_fim' => "'".$this->endDate."'",
-                'valor_minimo' => "'".$this->minValue."'",
-                'valor_maximo' => "'".$this->maxValue."'",
-                'per_dup' => "'".$this->allowDuplication."'",
+                'chave' => config('eupago.api_key'),
+                'valor' => $this->value,
+                'id' => $this->id,
+                'data_inicio' => $this->startDate,
+                'data_fim' => $this->endDate,
+                'valor_minimo' => $this->minValue,
+                'valor_maximo' => $this->maxValue,
+                'per_dup' => $this->allowDuplication,
             ]
         ];
+        dd($data);
     }
 }
