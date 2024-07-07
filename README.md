@@ -55,12 +55,12 @@ use DigitaldevLx\LaravelEupago\MB\MB;
 $order = Order::find(1);
 
 $mb = new MB(
-    $order->value,
-    $order->id,
-    $order->date,
-    $order->payment_limit_date,
-    $order->value,
-    $order->value,
+    $order->value, // foat
+    $order->id, // integer
+    $order->date, // Carbon::parse(now())->format('Y-m-d')
+    $order->payment_limit_date, // Carbon::parse(now())->addDays(3)->format('Y-m-d')
+    $order->value, // float
+    $order->value, // float
     0 // allows duplicated payments
 );
 
@@ -122,19 +122,19 @@ GET
 
 ####Params
 
-| Name          |     Type     |
-|---------------|:------------:|
-| valor         |    float     |
-| canal         |    string    |
-| referencia    |    string    |
-| transacao     |    string    |
-| identificador |   integer    |
-| mp            |    string    |
-| chave_api     |    string    |
-| data          | string:Y-m-d |
-| entidade      |    string    |
-| comissao      |    float     |
-| local         |    string    |
+| Name          |       Type       |
+|---------------|:----------------:|
+| valor         |      float       |
+| canal         |      string      |
+| referencia    |      string      |
+| transacao     |      string      |
+| identificador |     integer      |
+| mp            |      string      |
+| chave_api     |      string      |
+| data          | date:Y-m-d H:i:s |
+| entidade      |      string      |
+| comissao      |      float       |
+| local         |      string      |
 
 
 ### MB Way References
@@ -182,7 +182,7 @@ GET
 | identificador |   integer    |
 | mp            |    string    |
 | chave_api     |    string    |
-| data          | string-Y-m-d |
+| data          | date:Y-m-d H:i:s |
 | entidade      |    string    |
 | comissao      |    float     |
 | local         |    string    |
