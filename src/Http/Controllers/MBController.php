@@ -5,6 +5,7 @@ namespace DigitaldevLx\LaravelEupago\Http\Controllers;
 use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
 use DigitaldevLx\LaravelEupago\Http\Requests\MbCallbackRequest;
 use DigitaldevLx\LaravelEupago\Models\MbReference;
+use Illuminate\Support\Facades\Log;
 
 class MBController extends Controller
 {
@@ -20,7 +21,6 @@ class MBController extends Controller
 
         $reference = MbReference::where('reference', $validatedData['referencia'])
             ->where('value', $validatedData['valor'])
-            ->where('transaction_id', $validatedData['transacao'])
             ->where('state', 0)
             ->first();
 
@@ -28,7 +28,14 @@ class MBController extends Controller
             return response()->json(['response' => 'No pending reference found'])->setStatusCode(404);
         }
 
-        $reference->update(['state' => 1]);
+        $reference->update(['state' => 1, 'transaction_id' => $validatedData['transacao']]);
+
+        Log::info(
+            'EuPago Update State',
+            [
+                'MBReference' => $reference
+            ]
+        );
 
         event(new MBReferencePaid($reference));
 
