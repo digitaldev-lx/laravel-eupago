@@ -14,6 +14,7 @@ class MbwayReference extends Model
         'value',
         'alias',
         'state',
+        'transaction_id'
     ];
 
 

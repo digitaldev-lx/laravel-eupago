@@ -2,13 +2,11 @@
 
 namespace DigitaldevLx\LaravelEupago\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
-abstract class CallbackRequest extends FormRequest
+class CallbackRequest extends FormRequest
 {
 
     /**
@@ -36,7 +34,7 @@ abstract class CallbackRequest extends FormRequest
             ]
         );
 
-        return [
+        $parentRules = [
             'valor' => 'required',
             'canal' => [
                 'required',
@@ -55,16 +53,13 @@ abstract class CallbackRequest extends FormRequest
             'comissao' => 'required',
             'local' => 'nullable',
         ];
-    }
 
-    /**
-     * Failed validation disable redirect
-     *
-     * @param Validator $validator
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json($validator->errors(), 422));
-    }
+        if($this["mp"] == 'PC:PT'){
+            $parentRules['refrencia'][] = Rule::exists('mb_references', 'reference');
+        }elseif ($this["mp"] == 'MW:PT'){
+            $parentRules['refrencia'][] = Rule::exists('mbway_references', 'reference');
+        }
 
+        return $parentRules;
+    }
 }

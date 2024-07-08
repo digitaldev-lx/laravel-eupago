@@ -19,6 +19,7 @@ class CreateMbwayReferencesTable extends Migration
             $table->float('value', 10, 2)->default(0);
             $table->string('alias');
             $table->integer('state')->default(0);
+            $table->string('transaction_id')->nullable();
             $table->morphs('mbwayable');
             $table->timestamps();
         });
