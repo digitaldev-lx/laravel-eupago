@@ -113,11 +113,12 @@ $mbReferences = $order->mbReferences;
 #### Callback
 
 The package already handles the callback, updating the payment reference state and triggering an `MBReferencePaid` event.
-
+To handle MB references, you need to set **_mp_** param to PC:PT
 ```
+
 GET
 
-/eupago/mb/callback
+/eupago/callback
 ```
 
 ####Params
@@ -164,28 +165,29 @@ $mbwayReferences = $order->mbwayReferences;
 #### Callback
 
 The package already handles the callback, updating the payment reference state and triggering an `MBWayReferencePaid` event.
+To handle MB references, you need to set **_mp_** param to MW:PT
 
 ```
 GET
 
-/eupago/mbway/callback
+/eupago/callback
 ```
 
 ####Params
 
-| Name          |     Type     |
-|---------------|:------------:|
-| valor         |    float     |
-| canal         |    string    |
-| referencia    |    string    |
-| transacao     |    string    |
-| identificador |   integer    |
-| mp            |    string    |
-| chave_api     |    string    |
+| Name          |       Type       |
+|---------------|:----------------:|
+| valor         |      float       |
+| canal         |      string      |
+| referencia    |      string      |
+| transacao     |      string      |
+| identificador |     integer      |
+| mp            |      string      |
+| chave_api     |      string      |
 | data          | date:Y-m-d H:i:s |
-| entidade      |    string    |
-| comissao      |    float     |
-| local         |    string    |
+| entidade      |      string      |
+| comissao      |      float       |
+| local         |      string      |
 
 
 
