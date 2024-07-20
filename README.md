@@ -7,11 +7,25 @@ A Laravel package for making payments through the EuPago API based in CodeTech's
 [![Latest version](https://img.shields.io/github/release/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/releases)
 [![GitHub license](https://img.shields.io/github/license/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/blob/master/LICENSE)
 
+## Requirements
+
+| Release |  PHP   | Laravel |
+|---------|:------:|:-------:|
+| 2.2.0   | >= 8.3 |   11    |
+| 2.1.0   | >= 8.1 |   10    |
+
+
+
 ## Installation
 
-Install the PHP dependency:
+Install the PHP dependency in laravel 11:
 ```bash
 composer require digitaldev-lx/laravel-eupago
+```
+
+Install in Laravel 10:
+```bash
+composer require digitaldev-lx/laravel-eupago:2.1.0
 ```
 
 Publish the migration
