@@ -3,6 +3,8 @@
 namespace DigitaldevLx\LaravelEupago\MBWay;
 
 use DigitaldevLx\LaravelEupago\EuPago;
+use DigitaldevLx\LaravelEupago\Events\MBWayReferenceCreated;
+use DigitaldevLx\LaravelEupago\Events\MBWayReferenceCreationFailed;
 use GuzzleHttp\Client;
 
 class MBWay extends EuPago
@@ -51,11 +53,11 @@ class MBWay extends EuPago
      * MBWay constructor.
      *
      * @param float $value
-     * @param string $id
-     * @param int $alias
+     * @param int $id
+     * @param string $alias
      * @param string|null $description
      */
-    public function __construct(float $value, int $id, string $alias, string $description = null)
+    public function __construct(float $value, int $id, string $alias, ?string $description = null)
     {
         $this->value       = $value;
         $this->id          = $id;
@@ -109,6 +111,18 @@ class MBWay extends EuPago
 
         if (!$referenceData['sucesso']) {
             $this->addError($referenceData['estado'], $referenceData['resposta']);
+
+            event(new MBWayReferenceCreationFailed(
+                $this->errors,
+                [
+                    'value' => $this->value,
+                    'id' => $this->id,
+                    'alias' => $this->alias,
+                ]
+            ));
+        } else {
+            $mappedData = $this->mappedReferenceKeys($referenceData);
+            event(new MBWayReferenceCreated($mappedData));
         }
 
         return $this->mappedReferenceKeys($referenceData);

@@ -1,4 +1,12 @@
 .idea
 /vendor
 node_modules
-node_modules
+CLAUDE.md
+.claude
+
+# Test artifacts
+.phpunit.result.cache
+coverage.xml
+.pest
+phpstan-baseline.neon
+phpunit.xml

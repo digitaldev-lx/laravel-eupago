@@ -2,6 +2,7 @@
 
 namespace DigitaldevLx\LaravelEupago\Providers;;
 
+use DigitaldevLx\LaravelEupago\Console\CheckExpiredReferencesCommand;
 use Illuminate\Support\ServiceProvider;
 
 class EuPagoServiceProvider extends ServiceProvider
@@ -29,6 +30,13 @@ class EuPagoServiceProvider extends ServiceProvider
 
         // Load translations from custom path
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'eupago');
+
+        // Register commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CheckExpiredReferencesCommand::class,
+            ]);
+        }
     }
 
     /**

@@ -2,10 +2,13 @@
 
 namespace DigitaldevLx\LaravelEupago\Models;
 
+use DigitaldevLx\LaravelEupago\Database\Factories\MbReferenceFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MbReference extends Model
 {
+    use HasFactory;
     /**
      * @inheritdoc
      */
@@ -24,11 +27,11 @@ class MbReference extends Model
     /**
      * @inheritDoc
      */
-    protected $dates = [
-        'start_date',
-        'end_date',
-        'created_at',
-        'updated_at',
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
 
@@ -62,5 +65,13 @@ class MbReference extends Model
     public function mbable()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return MbReferenceFactory::new();
     }
 }

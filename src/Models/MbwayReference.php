@@ -2,10 +2,13 @@
 
 namespace DigitaldevLx\LaravelEupago\Models;
 
+use DigitaldevLx\LaravelEupago\Database\Factories\MbwayReferenceFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MbwayReference extends Model
 {
+    use HasFactory;
     /**
      * @inheritdoc
      */
@@ -48,5 +51,13 @@ class MbwayReference extends Model
     public function mbwayable()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return MbwayReferenceFactory::new();
     }
 }

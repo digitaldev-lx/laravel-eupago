@@ -51,6 +51,6 @@ trait Mbable
             return $mb->getErrors();
         }
 
-        $this->mbReferences()->create($mbReferenceData);
+        return $this->mbReferences()->create($mbReferenceData);
     }
 }

@@ -4,6 +4,8 @@ namespace DigitaldevLx\LaravelEupago\MB;
 
 use Carbon\Carbon;
 use DigitaldevLx\LaravelEupago\EuPago;
+use DigitaldevLx\LaravelEupago\Events\MBReferenceCreated;
+use DigitaldevLx\LaravelEupago\Events\MBReferenceCreationFailed;
 use GuzzleHttp\Client;
 
 class MB extends EuPago
@@ -23,7 +25,7 @@ class MB extends EuPago
     /**
      * External identifier. Ex: the order id.
      *
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -142,6 +144,19 @@ class MB extends EuPago
 
         if (!$referenceData['sucesso']) {
             $this->addError($referenceData['estado'], $referenceData['resposta']);
+
+            event(new MBReferenceCreationFailed(
+                $this->errors,
+                [
+                    'value' => $this->value,
+                    'id' => $this->id,
+                    'start_date' => $this->startDate,
+                    'end_date' => $this->endDate,
+                ]
+            ));
+        } else {
+            $mappedData = $this->mappedReferenceKeys($referenceData);
+            event(new MBReferenceCreated($mappedData));
         }
 
         return $this->mappedReferenceKeys($referenceData);
@@ -176,7 +191,7 @@ class MB extends EuPago
      */
     protected function getParams(): array
     {
-        return $data = [
+        return [
             'form_params' => [
                 'chave' => config('eupago.api_key'),
                 'valor' => $this->value,
@@ -188,6 +203,5 @@ class MB extends EuPago
                 'per_dup' => $this->allowDuplication,
             ]
         ];
-        dd($data);
     }
 }

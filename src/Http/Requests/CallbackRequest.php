@@ -40,7 +40,7 @@ class CallbackRequest extends FormRequest
                 'required',
                 Rule::in([config('eupago.channel')])
             ],
-            'referencia' => 'required',
+            'referencia' => ['required'],
             'transacao' => 'required',
             'identificador' => 'required',
             'mp' => 'required',
@@ -53,12 +53,6 @@ class CallbackRequest extends FormRequest
             'comissao' => 'required',
             'local' => 'nullable',
         ];
-
-        if($this["mp"] == 'PC:PT'){
-            $parentRules['refrencia'][] = Rule::exists('mb_references', 'reference');
-        }elseif ($this["mp"] == 'MW:PT'){
-            $parentRules['refrencia'][] = Rule::exists('mbway_references', 'reference');
-        }
 
         return $parentRules;
     }

@@ -2,23 +2,24 @@
 
 # Laravel EuPago
 
-A Laravel package for making payments through the EuPago API based in CodeTech's laravel-eupago package. Well Done CodeTech's Team.
+A comprehensive Laravel package for integrating with the EuPago payment gateway API. Support for Multibanco, MB Way, Credit Card, Google Pay, Apple Pay, and Payouts management.
 
 [![Latest version](https://img.shields.io/github/release/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/releases)
 [![GitHub license](https://img.shields.io/github/license/digitaldev-lx/laravel-eupago?style=flat-square)](https://github.com/digitaldev-lx/laravel-eupago/blob/master/LICENSE)
 
 ## Requirements
 
-| Release |  PHP   | Laravel |
-|---------|:------:|:-------:|
-| 2.2.0   | >= 8.3 |   11    |
-| 2.1.0   | >= 8.1 |   10    |
+| Release |      PHP       |   Laravel   |
+|---------|:--------------:|:-----------:|
+| 2.3.0   | 8.3 \|\| 8.4   | 11 \|\| 12  |
+| 2.2.0   |     >= 8.3     |     11      |
+| 2.1.0   |     >= 8.1     |     10      |
 
-
+> **Note:** Laravel 11 and 12 have different application structures compared to Laravel 10. This documentation provides version-specific instructions where applicable (e.g., event listeners, scheduling).
 
 ## Installation
 
-Install the PHP dependency in laravel 11:
+Install the PHP dependency in Laravel 11:
 ```bash
 composer require digitaldev-lx/laravel-eupago
 ```
@@ -29,192 +30,618 @@ composer require digitaldev-lx/laravel-eupago:2.1.0
 ```
 
 Publish the migration
-```
+```bash
 php artisan vendor:publish --provider=DigitaldevLx\\LaravelEupago\\Providers\\EuPagoServiceProvider --tag=migrations
 ```
 
 Run the migration
-```
+```bash
 php artisan migrate
 ```
 
 Publish the configuration file (optional)
-```
+```bash
 php artisan vendor:publish --provider=DigitaldevLx\\LaravelEupago\\Providers\\EuPagoServiceProvider --tag=config
 ```
 
 Publish the translations files (optional)
-```
+```bash
 php artisan vendor:publish --provider=DigitaldevLx\\LaravelEupago\\Providers\\EuPagoServiceProvider --tag=translations
 ```
 
+## Configuration
 
-## Configurations
+### Environment Variables
 
-### Environment
+Add the following to your `.env` file:
 
-There are two environments available for you to use: "test" and "prod". As you may have guessed,
-you can use the "test" environment during the development stage of your application. Switch to "prod"
-environment when your application is ready for production.
+```env
+EUPAGO_ENV=test          # or 'prod'
+EUPAGO_API_KEY=your_api_key
+EUPAGO_CHANNEL=your_channel
+```
 
+There are two environments available: "test" and "prod". Use the "test" environment during development and switch to "prod" when your application is ready for production.
 
-### MB References
+## Payment Methods
+
+### Multibanco (MB) References
 
 #### Usage
 
-For creating a MB reference, take the following example:
-```
+```php
 use DigitaldevLx\LaravelEupago\MB\MB;
 
 $order = Order::find(1);
 
 $mb = new MB(
-    $order->value, // foat
-    $order->id, // integer
-    $order->date, // Carbon::parse(now())->format('Y-m-d')
-    $order->payment_limit_date, // Carbon::parse(now())->addDays(3)->format('Y-m-d')
-    $order->value, // float
-    $order->value, // float
-    0 // allows duplicated payments
+    $order->value,              // float: payment amount
+    $order->id,                 // string: external identifier
+    $order->date,               // string: start date (Y-m-d)
+    $order->payment_limit_date, // string: end date (Y-m-d)
+    $order->value,              // float: minimum value
+    $order->value,              // float: maximum value
+    0                           // bool: allow duplicated payments
 );
 
 try {
-    // Make the request to EUPago's API
     $mbReferenceData = $mb->create();
 
     if ($mb->hasErrors()) {
         // handle errors
     }
-    
-    // Make the request to EUPago's API
+
     $order->mbReferences()->create($mbReferenceData);
 } catch (\Exception $e) {
     // handle exception
 }
 ```
 
-`$referenceData` will contain all the information about the payment: 
-```
+Response format:
+```php
 [
     'success' => true,
     'state' => 0,
     'response' => "OK",
     'reference' => "000001236",
     'value' => "3.00000",
+    'entity' => "11249",
 ]
 ```
 
-Use the trait on the models for which you want to generate MB references:
+#### Using the Trait
 
-```
-
+```php
 use DigitaldevLx\LaravelEupago\Traits\Mbable;
 
 class Order extends Model
 {
     use Mbable;
+}
 
-```
-
-Retrieve the MB references:
-
-```
+// Retrieve references
 $order = Order::find(1);
-
 $mbReferences = $order->mbReferences;
 ```
 
 #### Callback
 
-The package already handles the callback, updating the payment reference state and triggering an `MBReferencePaid` event.
-To handle MB references, you need to set **_mp_** param to PC:PT
-```
+The package handles callbacks automatically, updating the payment state and triggering events.
 
-GET
-
-/eupago/callback
-```
-
-####Params
-
-| Name          |       Type       |
-|---------------|:----------------:|
-| valor         |      float       |
-| canal         |      string      |
-| referencia    |      string      |
-| transacao     |      string      |
-| identificador |     integer      |
-| mp            |      string      |
-| chave_api     |      string      |
-| data          | date:Y-m-d H:i:s |
-| entidade      |      string      |
-| comissao      |      float       |
-| local         |      string      |
-
+**Endpoint:** `GET /eupago/callback`
+**Payment Method Code:** `PC:PT`
 
 ### MB Way References
 
 #### Usage
 
-Use the trait on the models for which you want to generate MB Way references:
+```php
+use DigitaldevLx\LaravelEupago\MBWay\MBWay;
 
+$order = Order::find(1);
+
+$mbway = new MBWay(
+    $order->value,      // float: payment amount
+    $order->id,         // int: external identifier
+    $customer->phone,   // string: phone number (alias)
+    'Order payment'     // string|null: optional description
+);
+
+try {
+    $mbwayReferenceData = $mbway->create();
+
+    if ($mbway->hasErrors()) {
+        // handle errors
+    }
+
+    $order->mbwayReferences()->create($mbwayReferenceData);
+} catch (\Exception $e) {
+    // handle exception
+}
 ```
 
+#### Using the Trait
+
+```php
 use DigitaldevLx\LaravelEupago\Traits\Mbwayable;
 
 class Order extends Model
 {
     use Mbwayable;
+}
 
-```
-
-Retrieve the MB Way references:
-
-```
+// Retrieve references
 $order = Order::find(1);
-
 $mbwayReferences = $order->mbwayReferences;
 ```
 
 #### Callback
 
-The package already handles the callback, updating the payment reference state and triggering an `MBWayReferencePaid` event.
-To handle MB references, you need to set **_mp_** param to MW:PT
+**Endpoint:** `GET /eupago/callback`
+**Payment Method Code:** `MW:PT`
 
+### Credit Card
+
+#### Single Payment
+
+```php
+use DigitaldevLx\LaravelEupago\CreditCard\CreditCard;
+
+$creditCard = new CreditCard(
+    150.00,                                // float: amount
+    'ORDER-456',                           // string: identifier
+    'https://example.com/success',         // string: success URL
+    'https://example.com/fail',            // string: fail URL
+    'https://example.com/back',            // string: back URL
+    'EN',                                  // string: language (PT, EN, FR, ES)
+    'EUR',                                 // string: currency
+    'customer@example.com',                // string|null: customer email
+    60                                     // int|null: minutes form up
+);
+
+try {
+    $result = $creditCard->create();
+
+    if ($result['success']) {
+        // Redirect user to $result['redirect_url']
+        // Store $result['reference'] and $result['transaction_id']
+    }
+} catch (\Exception $e) {
+    // handle exception
+}
 ```
-GET
 
-/eupago/callback
+**Maximum:** €3,999 per transaction
+**Callback Code:** `CC:PT`
+
+#### Recurring Payments (Subscriptions)
+
+**Step 1: Create Authorization**
+
+```php
+use DigitaldevLx\LaravelEupago\CreditCard\CreditCardRecurrence;
+
+$recurrence = new CreditCardRecurrence(
+    'SUBSCRIPTION-123',                    // string: identifier
+    'https://example.com/success',         // string: success URL
+    'https://example.com/fail',            // string: fail URL
+    'https://example.com/back',            // string: back URL
+    'PT'                                   // string: language
+);
+
+try {
+    $result = $recurrence->create();
+
+    if ($result['success']) {
+        // Redirect user to authorize subscription
+        // Store $result['subscription_id']
+    }
+} catch (\Exception $e) {
+    // handle exception
+}
 ```
 
-####Params
+**Step 2: Execute Recurring Payment**
 
-| Name          |       Type       |
-|---------------|:----------------:|
-| valor         |      float       |
-| canal         |      string      |
-| referencia    |      string      |
-| transacao     |      string      |
-| identificador |     integer      |
-| mp            |      string      |
-| chave_api     |      string      |
-| data          | date:Y-m-d H:i:s |
-| entidade      |      string      |
-| comissao      |      float       |
-| local         |      string      |
+```php
+use DigitaldevLx\LaravelEupago\CreditCard\CreditCardRecurringPayment;
 
+$payment = new CreditCardRecurringPayment(
+    'subscription-id-from-authorization',  // string: subscription ID
+    50.00,                                 // float: amount
+    'customer@example.com',                // string|null: customer email
+    true                                   // bool: notify customer
+);
 
+try {
+    $result = $payment->create();
 
----
+    if ($result['success']) {
+        // Payment processed
+    }
+} catch (\Exception $e) {
+    // handle exception
+}
+```
 
+#### Using the Trait
+
+```php
+use DigitaldevLx\LaravelEupago\Traits\Creditcardable;
+use DigitaldevLx\LaravelEupago\Traits\Creditcardrecurrable;
+
+class Order extends Model
+{
+    use Creditcardable;
+}
+
+class Subscription extends Model
+{
+    use Creditcardrecurrable;
+}
+```
+
+### Google Pay
+
+```php
+use DigitaldevLx\LaravelEupago\GooglePay\GooglePay;
+
+$googlePay = new GooglePay(
+    150.00,                                // float: amount
+    'ORDER-456',                           // string: identifier
+    'https://example.com/success',         // string: success URL
+    'https://example.com/fail',            // string: fail URL
+    'https://example.com/back',            // string: back URL
+    'EN',                                  // string: language
+    'EUR',                                 // string: currency
+    'customer@example.com',                // string|null: email
+    'John',                                // string|null: first name
+    'Doe',                                 // string|null: last name
+    'PT',                                  // string|null: country code
+    true,                                  // bool: notify customer
+    60                                     // int|null: minutes form up
+);
+
+try {
+    $result = $googlePay->create();
+
+    if ($result['success']) {
+        // Redirect to $result['redirect_url']
+    }
+} catch (\Exception $e) {
+    // handle exception
+}
+```
+
+**Maximum:** €99,999 per transaction
+**Callback Code:** `GP:PT`
+
+#### Using the Trait
+
+```php
+use DigitaldevLx\LaravelEupago\Traits\Googlepayable;
+
+class Order extends Model
+{
+    use Googlepayable;
+}
+```
+
+### Apple Pay
+
+```php
+use DigitaldevLx\LaravelEupago\ApplePay\ApplePay;
+
+$applePay = new ApplePay(
+    150.00,                                // float: amount
+    'ORDER-456',                           // string: identifier
+    'https://example.com/success',         // string: success URL
+    'https://example.com/fail',            // string: fail URL
+    'https://example.com/back',            // string: back URL
+    'EN',                                  // string: language
+    'EUR',                                 // string: currency
+    'customer@example.com',                // string|null: email
+    'John',                                // string|null: first name
+    'Doe',                                 // string|null: last name
+    'PT',                                  // string|null: country code
+    true,                                  // bool: notify customer
+    60                                     // int|null: minutes form up
+);
+
+try {
+    $result = $applePay->create();
+
+    if ($result['success']) {
+        // Redirect to $result['redirect_url']
+    }
+} catch (\Exception $e) {
+    // handle exception
+}
+```
+
+**Callback Code:** `AP:PT`
+
+#### Using the Trait
+
+```php
+use DigitaldevLx\LaravelEupago\Traits\Applepayable;
+
+class Order extends Model
+{
+    use Applepayable;
+}
+```
+
+## Payouts Management
+
+### List Payouts
+
+Retrieve all payouts for a specific date range using OAuth Bearer Token authentication.
+
+```php
+use DigitaldevLx\LaravelEupago\Payouts\Payout;
+
+$payout = new Payout(
+    '2024-01-01',              // string: start date (yyyy-mm-dd)
+    '2024-01-31',              // string: end date (yyyy-mm-dd)
+    'your-bearer-token'        // string: OAuth Bearer Token
+);
+
+try {
+    $result = $payout->list();
+
+    if ($result['success']) {
+        foreach ($result['payouts'] as $payout) {
+            // Process payout data
+        }
+    }
+} catch (\Exception $e) {
+    // handle exception
+}
+```
+
+### List Payout Transactions
+
+Retrieve all transaction details within a date range.
+
+```php
+use DigitaldevLx\LaravelEupago\Payouts\PayoutTransaction;
+
+$transactions = new PayoutTransaction(
+    '2024-01-01',              // string: start date (yyyy-mm-dd)
+    '2024-01-31',              // string: end date (yyyy-mm-dd)
+    'your-bearer-token'        // string: OAuth Bearer Token
+);
+
+try {
+    $result = $transactions->list();
+
+    if ($result['success']) {
+        foreach ($result['transactions'] as $transaction) {
+            // Process transaction data
+            // Includes: trid, date, amount, payment_method, status
+        }
+    }
+} catch (\Exception $e) {
+    // handle exception
+}
+```
+
+**Note:** For single-day queries, use the same date for both `start_date` and `end_date`.
+
+## Callback Parameters
+
+All payment callbacks receive the following parameters:
+
+| Name          |       Type       | Description                    |
+|---------------|:----------------:|--------------------------------|
+| valor         |      float       | Payment amount                 |
+| canal         |      string      | Channel identifier             |
+| referencia    |      string      | Payment reference              |
+| transacao     |      string      | Transaction ID                 |
+| identificador |     integer      | External identifier            |
+| mp            |      string      | Payment method code            |
+| chave_api     |      string      | API key                        |
+| data          | date:Y-m-d H:i:s | Transaction date               |
+| entidade      |      string      | Entity code                    |
+| comissao      |      float       | Commission                     |
+| local         |      string      | Transaction location           |
+
+## Events
+
+The package dispatches events throughout the payment lifecycle.
+
+### Reference Creation Events
+
+- `MBReferenceCreated` / `MBReferenceCreationFailed`
+- `MBWayReferenceCreated` / `MBWayReferenceCreationFailed`
+- `CreditCardReferenceCreated` / `CreditCardReferenceCreationFailed`
+- `CreditCardRecurrenceAuthorizationCreated` / `CreditCardRecurrenceAuthorizationCreationFailed`
+- `CreditCardRecurringPaymentCreated` / `CreditCardRecurringPaymentCreationFailed`
+- `GooglePayReferenceCreated` / `GooglePayReferenceCreationFailed`
+- `ApplePayReferenceCreated` / `ApplePayReferenceCreationFailed`
+
+### Payment Events
+
+- `MBReferencePaid`
+- `MBWayReferencePaid`
+- `CreditCardReferencePaid`
+- `GooglePayReferencePaid`
+- `ApplePayReferencePaid`
+
+### Expiration Events
+
+- `MBReferenceExpired`
+- `MBWayReferenceExpired`
+
+### Callback Events
+
+- `CallbackReceived` - Dispatched for all callbacks
+- `InvalidCallbackReceived` - Dispatched when validation fails
+
+### Listening to Events
+
+**Laravel 11 & 12:**
+
+Register event listeners in your `app/Providers/AppServiceProvider.php`:
+
+```php
+use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
+use Illuminate\Support\Facades\Event;
+
+public function boot(): void
+{
+    Event::listen(function (MBReferencePaid $event) {
+        $reference = $event->reference;
+
+        // Update order status
+        $reference->mbable->update(['status' => 'paid']);
+
+        // Send confirmation email
+        Mail::to($reference->mbable->user)->send(
+            new PaymentConfirmed($reference)
+        );
+    });
+}
+```
+
+Or create dedicated listener classes and register them:
+
+```php
+// app/Listeners/SendPaymentConfirmationEmail.php
+namespace App\Listeners;
+
+use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
+
+class SendPaymentConfirmationEmail
+{
+    public function handle(MBReferencePaid $event): void
+    {
+        // Send email logic
+    }
+}
+
+// In AppServiceProvider.php boot method:
+Event::listen(MBReferencePaid::class, SendPaymentConfirmationEmail::class);
+```
+
+**Laravel 10:**
+
+Register event listeners in your `app/Providers/EventServiceProvider.php`:
+
+```php
+use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
+use App\Listeners\SendPaymentConfirmationEmail;
+use App\Listeners\UpdateOrderStatus;
+
+protected $listen = [
+    MBReferencePaid::class => [
+        SendPaymentConfirmationEmail::class,
+        UpdateOrderStatus::class,
+    ],
+];
+```
+
+## Commands
+
+### Check Expired References
+
+Check for expired payment references and dispatch expiration events:
+
+```bash
+php artisan eupago:check-expired
+```
+
+This command finds all MB references where `end_date` has passed and `state` is 0 (unpaid), then dispatches `MBReferenceExpired` event for each.
+
+**Scheduling:**
+
+**Laravel 11 & 12:**
+
+Add to your `routes/console.php`:
+
+```php
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('eupago:check-expired')->daily();
+```
+
+**Laravel 10:**
+
+Add to your `app/Console/Kernel.php`:
+
+```php
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command('eupago:check-expired')->daily();
+}
+```
+
+## Testing
+
+The package includes comprehensive test coverage using Pest PHP.
+
+### Running Tests
+
+```bash
+# Run all tests
+composer test
+
+# Run with coverage (minimum 80% required)
+composer test:coverage
+
+# Run specific test file
+vendor/bin/pest tests/Unit/MB/MBTest.php
+```
+
+### Static Analysis
+
+```bash
+# Run Larastan Level 5 analysis
+composer analyse
+```
+
+### Using Factories in Tests
+
+```php
+use DigitaldevLx\LaravelEupago\Models\MbReference;
+use DigitaldevLx\LaravelEupago\Models\MbwayReference;
+use DigitaldevLx\LaravelEupago\Models\CreditCardReference;
+use DigitaldevLx\LaravelEupago\Models\GooglePayReference;
+use DigitaldevLx\LaravelEupago\Models\ApplePayReference;
+
+// Create unpaid reference
+$reference = MbReference::factory()->create();
+
+// Create paid reference
+$paidReference = MbReference::factory()->paid()->create();
+
+// Create expired reference
+$expiredReference = MbReference::factory()->expired()->create();
+
+// Other payment methods
+$mbwayReference = MbwayReference::factory()->create();
+$ccReference = CreditCardReference::factory()->paid()->create();
+$googlePayReference = GooglePayReference::factory()->create();
+$applePayReference = ApplePayReference::factory()->paid()->create();
+```
+
+## Contributing
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this project.
+
+## Changelog
+
+Please see [CHANGELOG.md](CHANGELOG.md) for details on recent changes.
 
 ## License
 
 **digitaldev-lx/laravel-eupago** is open-sourced software licensed under the [MIT license](https://github.com/digitaldev-lx/laravel-eupago/blob/master/LICENSE).
 
-
 ## About DigitalDev
 
-[DigitalDev](https://www.digitaldev.pt) is a web development agency based on Lisbon, Portugal. We specialize in Laravel, Livewire, and Tailwind CSS.
-[Codeboys](https://www.codeboys.pt) is our special partner and we work together to deliver the best solutions for our clients.
+[DigitalDev](https://www.digitaldev.pt) is a digital transformation agency based in Lisbon, Portugal. We specialize in transforming ideas into digital solutions that drive business growth online.
 
+With expertise in custom web development, system integration, DevOps, AI implementation, and advanced search systems, we help businesses scale beyond generic templates with practical, data-driven solutions. Our tech stack includes Laravel, Livewire, React, and modern cloud infrastructure.
+
+**Contact:** geral@digitaldev.pt | +351 961 546 227
