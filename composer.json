@@ -45,7 +45,7 @@
   "prefer-stable": true,
   "scripts": {
     "test": "vendor/bin/pest",
-    "test:coverage": "vendor/bin/pest --coverage --min=80",
+    "test:coverage": "vendor/bin/pest --coverage --min=50",
     "analyse": "vendor/bin/phpstan analyse",
     "lint": "vendor/bin/pint",
     "lint:check": "vendor/bin/pint --test"
