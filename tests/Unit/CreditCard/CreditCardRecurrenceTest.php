@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\CreditCard\CreditCardRecurrence;
 use DigitaldevLx\LaravelEupago\Events\CreditCardRecurrenceAuthorizationCreated;
 use DigitaldevLx\LaravelEupago\Events\CreditCardRecurrenceAuthorizationFailed;
@@ -29,13 +31,14 @@ it('creates Credit Card Recurrence Authorization successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence {
+    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $responseData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
+            if (! isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
                 $errorMessage = $responseData['message'] ?? 'Unknown error';
                 $this->addError('error', $errorMessage);
                 event(new CreditCardRecurrenceAuthorizationFailed($this->errors, []));
@@ -85,13 +88,14 @@ it('handles Credit Card Recurrence Authorization creation failure', function () 
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence {
+    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $responseData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
+            if (! isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
                 $errorMessage = $responseData['message'] ?? 'Unknown error';
                 $this->addError('error', $errorMessage);
                 event(new CreditCardRecurrenceAuthorizationFailed($this->errors, []));
@@ -130,7 +134,8 @@ it('handles Credit Card Recurrence Authorization creation failure', function () 
 it('builds correct parameters for API request', function () {
     config(['eupago.api_key' => 'demo-f298-22a3-1cea-101']);
 
-    $recurrence = new class('CUSTOMER-456') extends CreditCardRecurrence {
+    $recurrence = new class('CUSTOMER-456') extends CreditCardRecurrence
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -150,7 +155,8 @@ it('builds correct parameters for API request', function () {
 });
 
 it('maps API response keys correctly', function () {
-    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence {
+    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence
+    {
         public function mappedResponseKeys(array $data): array
         {
             return parent::mappedResponseKeys($data);
@@ -178,7 +184,8 @@ it('maps API response keys correctly', function () {
 });
 
 it('handles missing keys in API response gracefully', function () {
-    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence {
+    $recurrence = new class('CUSTOMER-123') extends CreditCardRecurrence
+    {
         public function mappedResponseKeys(array $data): array
         {
             return parent::mappedResponseKeys($data);

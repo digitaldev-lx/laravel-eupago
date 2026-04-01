@@ -1,38 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Traits;
 
 use DigitaldevLx\LaravelEupago\GooglePay\GooglePay;
 use DigitaldevLx\LaravelEupago\Models\GooglePayReference;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Googlepayable
 {
-    /**
-     * Get all of the model's Google Pay references.
-     */
-    public function googlePayReferences()
+    /** @return MorphMany<GooglePayReference, $this> */
+    public function googlePayReferences(): MorphMany
     {
         return $this->morphMany(GooglePayReference::class, 'googlepayable');
     }
 
     /**
-     * Creates a Google Pay reference.
-     *
-     * @param float $value
-     * @param string $identifier
-     * @param string $successUrl
-     * @param string $failUrl
-     * @param string $backUrl
-     * @param string $lang
-     * @param string $currency
-     * @param string|null $customerEmail
-     * @param string|null $customerFirstName
-     * @param string|null $customerLastName
-     * @param string|null $customerCountryCode
-     * @param bool $customerNotify
-     * @param int|null $minutesFormUp
-     * @return array|GooglePayReference
-     * @throws \Exception
+     * @return array<string|int, string>|GooglePayReference
      */
     public function createGooglePayReference(
         float $value,
@@ -47,8 +32,8 @@ trait Googlepayable
         ?string $customerLastName = null,
         ?string $customerCountryCode = null,
         bool $customerNotify = false,
-        ?int $minutesFormUp = null
-    ) {
+        ?int $minutesFormUp = null,
+    ): array|GooglePayReference {
         $googlePay = new GooglePay(
             $value,
             $identifier,
@@ -65,11 +50,7 @@ trait Googlepayable
             $minutesFormUp
         );
 
-        try {
-            $googlePayReferenceData = $googlePay->create();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $googlePayReferenceData = $googlePay->create();
 
         if ($googlePay->hasErrors()) {
             return $googlePay->getErrors();

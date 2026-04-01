@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\CreditCardReference;
 use DigitaldevLx\LaravelEupago\Traits\Creditcardable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -13,10 +16,12 @@ beforeEach(function () {
         $table->timestamps();
     });
 
-    $this->testModelClass = new class extends Model {
+    $this->testModelClass = new class extends Model
+    {
         use Creditcardable;
 
         protected $table = 'test_models';
+
         protected $guarded = [];
     };
 });
@@ -28,7 +33,7 @@ afterEach(function () {
 it('has creditCardReferences relationship', function () {
     $model = $this->testModelClass::create(['name' => 'Test']);
 
-    expect($model->creditCardReferences())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphMany::class);
+    expect($model->creditCardReferences())->toBeInstanceOf(MorphMany::class);
 });
 
 it('can retrieve credit card references through relationship', function () {

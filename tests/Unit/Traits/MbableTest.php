@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\MbReference;
 use DigitaldevLx\LaravelEupago\Traits\Mbable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -13,10 +16,12 @@ beforeEach(function () {
         $table->timestamps();
     });
 
-    $this->testModelClass = new class extends Model {
+    $this->testModelClass = new class extends Model
+    {
         use Mbable;
 
         protected $table = 'test_models';
+
         protected $guarded = [];
     };
 });
@@ -28,7 +33,7 @@ afterEach(function () {
 it('has mbReferences relationship', function () {
     $model = $this->testModelClass::create(['name' => 'Test']);
 
-    expect($model->mbReferences())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphMany::class);
+    expect($model->mbReferences())->toBeInstanceOf(MorphMany::class);
 });
 
 it('can retrieve mb references through relationship', function () {

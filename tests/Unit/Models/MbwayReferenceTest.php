@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\MbwayReference;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 it('can be instantiated', function () {
-    $reference = new MbwayReference();
+    $reference = new MbwayReference;
 
     expect($reference)->toBeInstanceOf(Model::class);
 });
 
 it('has correct fillable attributes', function () {
-    $reference = new MbwayReference();
+    $reference = new MbwayReference;
 
     expect($reference->getFillable())->toContain('reference', 'value', 'alias', 'state', 'transaction_id');
 });
@@ -41,7 +44,7 @@ it('has paid scope that filters paid references', function () {
     $paidReferences = MbwayReference::paid()->get();
 
     expect($paidReferences)->toHaveCount(2);
-    expect($paidReferences->every(fn($ref) => $ref->state === 1))->toBeTrue();
+    expect($paidReferences->every(fn ($ref) => $ref->state === 1))->toBeTrue();
 });
 
 it('has polymorphic mbwayable relationship', function () {
@@ -50,5 +53,5 @@ it('has polymorphic mbwayable relationship', function () {
         'mbwayable_id' => null,
     ]);
 
-    expect($reference->mbwayable())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphTo::class);
+    expect($reference->mbwayable())->toBeInstanceOf(MorphTo::class);
 });

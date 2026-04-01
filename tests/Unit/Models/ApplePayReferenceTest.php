@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\ApplePayReference;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 it('can be instantiated', function () {
-    $reference = new ApplePayReference();
+    $reference = new ApplePayReference;
 
     expect($reference)->toBeInstanceOf(Model::class);
 });
 
 it('has correct fillable attributes', function () {
-    $reference = new ApplePayReference();
+    $reference = new ApplePayReference;
 
     expect($reference->getFillable())->toContain(
         'transaction_id',
@@ -54,7 +58,7 @@ it('has paid scope that filters paid references', function () {
     $paidReferences = ApplePayReference::paid()->get();
 
     expect($paidReferences)->toHaveCount(2);
-    expect($paidReferences->every(fn($ref) => $ref->state === 1))->toBeTrue();
+    expect($paidReferences->every(fn ($ref) => $ref->state === 1))->toBeTrue();
 });
 
 it('has polymorphic applepayable relationship', function () {
@@ -63,7 +67,7 @@ it('has polymorphic applepayable relationship', function () {
         'applepayable_id' => null,
     ]);
 
-    expect($reference->applepayable())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphTo::class);
+    expect($reference->applepayable())->toBeInstanceOf(MorphTo::class);
 });
 
 it('casts dates correctly', function () {
@@ -71,8 +75,8 @@ it('casts dates correctly', function () {
 
     $reference->refresh();
 
-    expect($reference->created_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
-        ->and($reference->updated_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($reference->created_at)->toBeInstanceOf(Carbon::class)
+        ->and($reference->updated_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('can store redirect URL', function () {

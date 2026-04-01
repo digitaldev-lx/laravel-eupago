@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Payouts\Payout;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -29,11 +31,8 @@ it('lists payouts successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payout = new class(
-        '2024-01-15',
-        '2024-01-16',
-        'test-bearer-token'
-    ) extends Payout {
+    $payout = new class('2024-01-15', '2024-01-16', 'test-bearer-token') extends Payout
+    {
         public function listWithClient(Client $client)
         {
             $response = $client->get(self::URI, $this->getParams());
@@ -80,11 +79,8 @@ it('handles payout listing failure with invalid token', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payout = new class(
-        '2024-01-15',
-        '2024-01-16',
-        'invalid-bearer-token'
-    ) extends Payout {
+    $payout = new class('2024-01-15', '2024-01-16', 'invalid-bearer-token') extends Payout
+    {
         public function listWithClient(Client $client)
         {
             $response = $client->get(self::URI, $this->getParams());
@@ -126,11 +122,8 @@ it('handles payout listing failure with invalid token', function () {
 });
 
 it('builds correct parameters for API request', function () {
-    $payout = new class(
-        '2024-01-01',
-        '2024-01-31',
-        'test-bearer-token-123'
-    ) extends Payout {
+    $payout = new class('2024-01-01', '2024-01-31', 'test-bearer-token-123') extends Payout
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -160,11 +153,8 @@ it('handles empty payouts list', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payout = new class(
-        '2024-01-15',
-        '2024-01-16',
-        'test-bearer-token'
-    ) extends Payout {
+    $payout = new class('2024-01-15', '2024-01-16', 'test-bearer-token') extends Payout
+    {
         public function listWithClient(Client $client)
         {
             $response = $client->get(self::URI, $this->getParams());
@@ -190,11 +180,8 @@ it('handles empty payouts list', function () {
 });
 
 it('uses same date for single day query', function () {
-    $payout = new class(
-        '2024-01-15',
-        '2024-01-15',
-        'test-bearer-token'
-    ) extends Payout {
+    $payout = new class('2024-01-15', '2024-01-15', 'test-bearer-token') extends Payout
+    {
         public function getParams(): array
         {
             return parent::getParams();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,28 +14,13 @@ class CreditCardRecurringPaymentCreated
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * The payment data returned from API.
-     *
-     * @var array
+     * @param  array<string, mixed>  $paymentData
      */
-    public $paymentData;
+    public function __construct(
+        public readonly array $paymentData,
+    ) {}
 
-    /**
-     * CreditCardRecurringPaymentCreated constructor.
-     *
-     * @param array $paymentData
-     */
-    public function __construct(array $paymentData)
-    {
-        $this->paymentData = $paymentData;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

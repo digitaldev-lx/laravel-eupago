@@ -7,20 +7,40 @@ on:
     branches: [master, main, develop]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Run Pint
+        run: vendor/bin/pint --test
+
   test:
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: true
       matrix:
-        php: ['8.3', '8.4']
-        laravel: ['^11.0', '^12.0']
+        php: ['8.4']
+        laravel: ['^11.0', '^12.0', '^13.0']
         dependency-version: [prefer-stable]
         include:
           - laravel: '^11.0'
             testbench: '^9.0'
           - laravel: '^12.0'
             testbench: '^10.0'
+          - laravel: '^13.0'
+            testbench: '^11.0'
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
@@ -52,7 +72,7 @@ jobs:
         run: vendor/bin/pest --coverage --min=80
 
       - name: Run Larastan
-        run: vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse --memory-limit=512M
 
   coverage:
     runs-on: ubuntu-latest
@@ -65,7 +85,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: '8.4'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
           coverage: xdebug
 

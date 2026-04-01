@@ -1,51 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Traits;
 
 use Carbon\Carbon;
 use DigitaldevLx\LaravelEupago\MB\MB;
 use DigitaldevLx\LaravelEupago\Models\MbReference;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Mbable
 {
-    /**
-     * Get all of the model's MB references.
-     */
-    public function mbReferences()
+    /** @return MorphMany<MbReference, $this> */
+    public function mbReferences(): MorphMany
     {
         return $this->morphMany(MbReference::class, 'mbable');
     }
 
     /**
-     * Creates a MB reference.
-     *
-     * @param float $value
-     * @param string $id
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param float $minValue
-     * @param float $maxValue
-     * @param bool $allowDuplication
-     * @return array
-     * @throws \Exception
+     * @return array<string|int, string>|MbReference
      */
-    public function createMbReference(float $value, string $id, Carbon $startDate, Carbon $endDate, float $minValue, float $maxValue, bool $allowDuplication = false)
-    {
+    public function createMbReference(
+        float $value,
+        string $id,
+        Carbon $startDate,
+        Carbon $endDate,
+        float $minValue,
+        float $maxValue,
+        bool $allowDuplication = false,
+    ): array|MbReference {
         $mb = new MB(
             $value,
             $id,
-            $startDate,
-            $endDate,
+            $startDate->format('Y-m-d'),
+            $endDate->format('Y-m-d'),
             $minValue,
             $maxValue,
             $allowDuplication
         );
 
-        try {
-            $mbReferenceData = $mb->create();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $mbReferenceData = $mb->create();
 
         if ($mb->hasErrors()) {
             return $mb->getErrors();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,37 +14,15 @@ class MBReferenceCreationFailed
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * The errors returned from API.
-     *
-     * @var array
+     * @param  array<string|int, string>  $errors
+     * @param  array<string, mixed>  $parameters
      */
-    public $errors;
+    public function __construct(
+        public readonly array $errors,
+        public readonly array $parameters = [],
+    ) {}
 
-    /**
-     * The request parameters.
-     *
-     * @var array
-     */
-    public $parameters;
-
-    /**
-     * MBReferenceCreationFailed constructor.
-     *
-     * @param array $errors
-     * @param array $parameters
-     */
-    public function __construct(array $errors, array $parameters = [])
-    {
-        $this->errors = $errors;
-        $this->parameters = $parameters;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

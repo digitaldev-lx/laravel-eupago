@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,37 +14,15 @@ class InvalidCallbackReceived
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * The callback data received.
-     *
-     * @var array
+     * @param  array<string, mixed>  $callbackData
+     * @param  array<string, mixed>  $errors
      */
-    public $callbackData;
+    public function __construct(
+        public readonly array $callbackData,
+        public readonly array $errors,
+    ) {}
 
-    /**
-     * The validation errors.
-     *
-     * @var array
-     */
-    public $errors;
-
-    /**
-     * InvalidCallbackReceived constructor.
-     *
-     * @param array $callbackData
-     * @param array $errors
-     */
-    public function __construct(array $callbackData, array $errors)
-    {
-        $this->callbackData = $callbackData;
-        $this->errors = $errors;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

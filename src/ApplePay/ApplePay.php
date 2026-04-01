@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\ApplePay;
 
 use DigitaldevLx\LaravelEupago\EuPago;
@@ -9,209 +11,40 @@ use GuzzleHttp\Client;
 
 class ApplePay extends EuPago
 {
-    /**
-     * The unique resource identifier.
-     */
-    const URI = '/api/v1.02/euapplepay/create';
+    public const string URI = '/api/v1.02/euapplepay/create';
 
-    /**
-     * The payment value.
-     *
-     * @var float
-     */
-    protected $value;
-
-    /**
-     * External identifier. Ex: the order id.
-     *
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * Currency code.
-     *
-     * @var string
-     */
-    protected $currency;
-
-    /**
-     * Success redirect URL.
-     *
-     * @var string
-     */
-    protected $successUrl;
-
-    /**
-     * Fail redirect URL.
-     *
-     * @var string
-     */
-    protected $failUrl;
-
-    /**
-     * Back URL.
-     *
-     * @var string
-     */
-    protected $backUrl;
-
-    /**
-     * Language code.
-     *
-     * @var string
-     */
-    protected $lang;
-
-    /**
-     * Customer email.
-     *
-     * @var string|null
-     */
-    protected $customerEmail;
-
-    /**
-     * Customer first name.
-     *
-     * @var string|null
-     */
-    protected $customerFirstName;
-
-    /**
-     * Customer last name.
-     *
-     * @var string|null
-     */
-    protected $customerLastName;
-
-    /**
-     * Customer country code.
-     *
-     * @var string|null
-     */
-    protected $customerCountryCode;
-
-    /**
-     * Enable customer notifications.
-     *
-     * @var bool
-     */
-    protected $customerNotify;
-
-    /**
-     * Form availability duration in minutes.
-     *
-     * @var int|null
-     */
-    protected $minutesFormUp;
-
-    /**
-     * The errors stored during the operations.
-     *
-     * @var array
-     */
-    protected $errors = [];
-
-    /**
-     * ApplePay constructor.
-     *
-     * @param float $value
-     * @param string $identifier
-     * @param string $successUrl
-     * @param string $failUrl
-     * @param string $backUrl
-     * @param string $lang
-     * @param string $currency
-     * @param string|null $customerEmail
-     * @param string|null $customerFirstName
-     * @param string|null $customerLastName
-     * @param string|null $customerCountryCode
-     * @param bool $customerNotify
-     * @param int|null $minutesFormUp
-     */
     public function __construct(
-        float $value,
-        string $identifier,
-        string $successUrl,
-        string $failUrl,
-        string $backUrl,
-        string $lang = 'PT',
-        string $currency = 'EUR',
-        ?string $customerEmail = null,
-        ?string $customerFirstName = null,
-        ?string $customerLastName = null,
-        ?string $customerCountryCode = null,
-        bool $customerNotify = false,
-        ?int $minutesFormUp = null
-    ) {
-        $this->value = $value;
-        $this->identifier = $identifier;
-        $this->successUrl = $successUrl;
-        $this->failUrl = $failUrl;
-        $this->backUrl = $backUrl;
-        $this->lang = $lang;
-        $this->currency = $currency;
-        $this->customerEmail = $customerEmail;
-        $this->customerFirstName = $customerFirstName;
-        $this->customerLastName = $customerLastName;
-        $this->customerCountryCode = $customerCountryCode;
-        $this->customerNotify = $customerNotify;
-        $this->minutesFormUp = $minutesFormUp;
-    }
+        protected readonly float $value,
+        protected readonly string $identifier,
+        protected readonly string $successUrl,
+        protected readonly string $failUrl,
+        protected readonly string $backUrl,
+        protected readonly string $lang = 'PT',
+        protected readonly string $currency = 'EUR',
+        protected readonly ?string $customerEmail = null,
+        protected readonly ?string $customerFirstName = null,
+        protected readonly ?string $customerLastName = null,
+        protected readonly ?string $customerCountryCode = null,
+        protected readonly bool $customerNotify = false,
+        protected readonly ?int $minutesFormUp = null,
+    ) {}
 
     /**
-     * Returns the errors.
-     *
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * Adds an error to the bag.
-     *
-     * @param $code
-     * @param $message
-     */
-    protected function addError($code, $message)
-    {
-        $this->errors[$code] = html_entity_decode($message);
-    }
-
-    /**
-     * Determines whether errors are logged.
-     *
-     * @return bool
-     */
-    public function hasErrors()
-    {
-        return count($this->errors) > 0;
-    }
-
-    /**
-     * Generates a new Apple Pay reference.
-     *
-     * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array<string, mixed>
      */
     public function create(): array
     {
         $client = new Client(['base_uri' => $this->getBaseUri()]);
 
-        try {
-            $response = $client->post(self::URI, $this->getParams());
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $response = $client->post(self::URI, $this->getParams());
 
+        /** @var array<string, mixed> $referenceData */
         $referenceData = json_decode($response->getBody()->getContents(), true);
 
-        if (!isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
+        if (! isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
             $errorMessage = $referenceData['text'] ?? $referenceData['message'] ?? 'Unknown error';
             $errorCode = $referenceData['code'] ?? 'error';
-            $this->addError($errorCode, $errorMessage);
+            $this->addError((string) $errorCode, (string) $errorMessage);
 
             event(new ApplePayReferenceCreationFailed(
                 $this->errors,
@@ -235,10 +68,8 @@ class ApplePay extends EuPago
     }
 
     /**
-     * Maps the reference data keys.
-     *
-     * @param array $referenceData
-     * @return array
+     * @param  array<string, mixed>  $referenceData
+     * @return array<string, mixed>
      */
     protected function mappedReferenceKeys(array $referenceData): array
     {
@@ -252,9 +83,7 @@ class ApplePay extends EuPago
     }
 
     /**
-     * Returns the required params for making a request.
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function getParams(): array
     {

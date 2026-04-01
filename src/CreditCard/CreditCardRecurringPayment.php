@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\CreditCard;
 
 use DigitaldevLx\LaravelEupago\EuPago;
@@ -9,139 +11,33 @@ use GuzzleHttp\Client;
 
 class CreditCardRecurringPayment extends EuPago
 {
-    /**
-     * The unique resource identifier.
-     */
-    const URI = '/api/v1.02/creditcard/payment/';
+    public const string URI = '/api/v1.02/creditcard/payment/';
 
-    /**
-     * The subscription ID (recurrentID).
-     *
-     * @var string
-     */
-    protected $subscriptionId;
-
-    /**
-     * The payment value.
-     *
-     * @var float
-     */
-    protected $value;
-
-    /**
-     * External identifier. Ex: the order id.
-     *
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * Currency code.
-     *
-     * @var string
-     */
-    protected $currency;
-
-    /**
-     * Customer email.
-     *
-     * @var string|null
-     */
-    protected $customerEmail;
-
-    /**
-     * Enable customer notifications.
-     *
-     * @var bool
-     */
-    protected $customerNotify;
-
-    /**
-     * The errors stored during the operations.
-     *
-     * @var array
-     */
-    protected $errors = [];
-
-    /**
-     * CreditCardRecurringPayment constructor.
-     *
-     * @param string $subscriptionId
-     * @param float $value
-     * @param string $identifier
-     * @param string $currency
-     * @param string|null $customerEmail
-     * @param bool $customerNotify
-     */
     public function __construct(
-        string $subscriptionId,
-        float $value,
-        string $identifier,
-        string $currency = 'EUR',
-        ?string $customerEmail = null,
-        bool $customerNotify = false
-    ) {
-        $this->subscriptionId = $subscriptionId;
-        $this->value = $value;
-        $this->identifier = $identifier;
-        $this->currency = $currency;
-        $this->customerEmail = $customerEmail;
-        $this->customerNotify = $customerNotify;
-    }
+        protected readonly string $subscriptionId,
+        protected readonly float $value,
+        protected readonly string $identifier,
+        protected readonly string $currency = 'EUR',
+        protected readonly ?string $customerEmail = null,
+        protected readonly bool $customerNotify = false,
+    ) {}
 
     /**
-     * Returns the errors.
-     *
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * Adds an error to the bag.
-     *
-     * @param $code
-     * @param $message
-     */
-    protected function addError($code, $message)
-    {
-        $this->errors[$code] = html_entity_decode($message);
-    }
-
-    /**
-     * Determines whether errors are logged.
-     *
-     * @return bool
-     */
-    public function hasErrors()
-    {
-        return count($this->errors) > 0;
-    }
-
-    /**
-     * Creates a new recurring payment.
-     *
-     * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array<string, mixed>
      */
     public function create(): array
     {
         $client = new Client(['base_uri' => $this->getBaseUri()]);
 
-        try {
-            $response = $client->post(self::URI . $this->subscriptionId, $this->getParams());
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $response = $client->post(self::URI.$this->subscriptionId, $this->getParams());
 
+        /** @var array<string, mixed> $responseData */
         $responseData = json_decode($response->getBody()->getContents(), true);
 
-        if (!isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
+        if (! isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
             $errorMessage = $responseData['text'] ?? $responseData['message'] ?? 'Unknown error';
             $errorCode = $responseData['code'] ?? 'error';
-            $this->addError($errorCode, $errorMessage);
+            $this->addError((string) $errorCode, (string) $errorMessage);
 
             event(new CreditCardRecurringPaymentFailed(
                 $this->errors,
@@ -165,10 +61,8 @@ class CreditCardRecurringPayment extends EuPago
     }
 
     /**
-     * Maps the response data keys.
-     *
-     * @param array $responseData
-     * @return array
+     * @param  array<string, mixed>  $responseData
+     * @return array<string, mixed>
      */
     protected function mappedResponseKeys(array $responseData): array
     {
@@ -183,9 +77,7 @@ class CreditCardRecurringPayment extends EuPago
     }
 
     /**
-     * Returns the required params for making a request.
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function getParams(): array
     {

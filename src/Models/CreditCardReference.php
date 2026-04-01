@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Models;
 
 use DigitaldevLx\LaravelEupago\Database\Factories\CreditCardReferenceFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CreditCardReference extends Model
 {
+    /** @use HasFactory<CreditCardReferenceFactory> */
     use HasFactory;
 
-    /**
-     * @inheritdoc
-     */
+    /** @var list<string> */
     protected $fillable = [
         'transaction_id',
         'reference',
@@ -23,52 +26,16 @@ class CreditCardReference extends Model
         'customer_email',
     ];
 
-    /**
-     * @inheritDoc
-     */
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Scopes a query to only include paid references.
-     *
-     * @param $query
-     * @return mixed
-     */
-    public function scopePaid($query)
+    /** @param  Builder<self>  $query
+     *  @return Builder<self> */
+    public function scopePaid(Builder $query): Builder
     {
         return $query->where('state', 1);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get the owning creditcardable model.
-     */
-    public function creditcardable()
+    /** @return MorphTo<Model, $this> */
+    public function creditcardable(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory()
-    {
-        return CreditCardReferenceFactory::new();
     }
 }

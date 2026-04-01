@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\MbwayReference;
 use DigitaldevLx\LaravelEupago\Traits\Mbwayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -13,10 +16,12 @@ beforeEach(function () {
         $table->timestamps();
     });
 
-    $this->testModelClass = new class extends Model {
+    $this->testModelClass = new class extends Model
+    {
         use Mbwayable;
 
         protected $table = 'test_mbway_models';
+
         protected $guarded = [];
     };
 });
@@ -28,7 +33,7 @@ afterEach(function () {
 it('has mbwayReferences relationship', function () {
     $model = $this->testModelClass::create(['name' => 'Test']);
 
-    expect($model->mbwayReferences())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphMany::class);
+    expect($model->mbwayReferences())->toBeInstanceOf(MorphMany::class);
 });
 
 it('can retrieve mbway references through relationship', function () {

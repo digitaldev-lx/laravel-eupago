@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Events\GooglePayReferenceCreated;
 use DigitaldevLx\LaravelEupago\Events\GooglePayReferenceCreationFailed;
 use DigitaldevLx\LaravelEupago\GooglePay\GooglePay;
@@ -28,22 +30,14 @@ it('creates Google Pay reference successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $googlePay = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'PT',
-        'EUR',
-        'test@example.com'
-    ) extends GooglePay {
+    $googlePay = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'PT', 'EUR', 'test@example.com') extends GooglePay
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
+            if (! isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
                 $errorMessage = $referenceData['text'] ?? $referenceData['message'] ?? 'Unknown error';
                 $errorCode = $referenceData['code'] ?? 'error';
                 $this->addError($errorCode, $errorMessage);
@@ -94,19 +88,14 @@ it('handles Google Pay reference creation failure', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $googlePay = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back'
-    ) extends GooglePay {
+    $googlePay = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back') extends GooglePay
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
+            if (! isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
                 $errorMessage = $referenceData['text'] ?? $referenceData['message'] ?? 'Unknown error';
                 $errorCode = $referenceData['code'] ?? 'error';
                 $this->addError($errorCode, $errorMessage);
@@ -146,21 +135,8 @@ it('handles Google Pay reference creation failure', function () {
 it('builds correct parameters for API request with full customer data', function () {
     config(['eupago.api_key' => 'demo-f298-22a3-1cea-101']);
 
-    $googlePay = new class(
-        150.00,
-        'ORDER-456',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'EN',
-        'EUR',
-        'customer@example.com',
-        'John',
-        'Doe',
-        'PT',
-        true,
-        60
-    ) extends GooglePay {
+    $googlePay = new class(150.00, 'ORDER-456', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'EN', 'EUR', 'customer@example.com', 'John', 'Doe', 'PT', true, 60) extends GooglePay
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -198,13 +174,8 @@ it('builds correct parameters for API request with full customer data', function
 it('builds parameters without optional minutesFormUp', function () {
     config(['eupago.api_key' => 'demo-f298-22a3-1cea-101']);
 
-    $googlePay = new class(
-        100.00,
-        'ORDER-789',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back'
-    ) extends GooglePay {
+    $googlePay = new class(100.00, 'ORDER-789', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back') extends GooglePay
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -219,13 +190,8 @@ it('builds parameters without optional minutesFormUp', function () {
 it('builds parameters without customer data', function () {
     config(['eupago.api_key' => 'demo-f298-22a3-1cea-101']);
 
-    $googlePay = new class(
-        100.00,
-        'ORDER-789',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back'
-    ) extends GooglePay {
+    $googlePay = new class(100.00, 'ORDER-789', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back') extends GooglePay
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -238,13 +204,8 @@ it('builds parameters without customer data', function () {
 });
 
 it('maps API response keys correctly', function () {
-    $googlePay = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back'
-    ) extends GooglePay {
+    $googlePay = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back') extends GooglePay
+    {
         public function mappedReferenceKeys(array $data): array
         {
             return parent::mappedReferenceKeys($data);
@@ -270,13 +231,8 @@ it('maps API response keys correctly', function () {
 });
 
 it('handles missing keys in API response gracefully', function () {
-    $googlePay = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back'
-    ) extends GooglePay {
+    $googlePay = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back') extends GooglePay
+    {
         public function mappedReferenceKeys(array $data): array
         {
             return parent::mappedReferenceKeys($data);

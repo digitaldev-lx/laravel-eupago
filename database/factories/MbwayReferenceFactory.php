@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Database\Factories;
 
 use DigitaldevLx\LaravelEupago\Models\MbwayReference;
@@ -14,7 +16,7 @@ class MbwayReferenceFactory extends Factory
         return [
             'reference' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
             'value' => $this->faker->randomFloat(2, 10, 1000),
-            'alias' => '+351' . $this->faker->numerify('#########'),
+            'alias' => '+351'.$this->faker->numerify('#########'),
             'state' => 0,
             'transaction_id' => null,
             'mbwayable_type' => 'App\\Models\\Order',

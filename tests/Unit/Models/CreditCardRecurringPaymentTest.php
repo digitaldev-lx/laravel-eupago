@@ -1,17 +1,21 @@
 <?php
 
-use DigitaldevLx\LaravelEupago\Models\CreditCardRecurringPayment;
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurrenceAuthorization;
+use DigitaldevLx\LaravelEupago\Models\CreditCardRecurringPayment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 it('can be instantiated', function () {
-    $payment = new CreditCardRecurringPayment();
+    $payment = new CreditCardRecurringPayment;
 
     expect($payment)->toBeInstanceOf(Model::class);
 });
 
 it('has correct fillable attributes', function () {
-    $payment = new CreditCardRecurringPayment();
+    $payment = new CreditCardRecurringPayment;
 
     expect($payment->getFillable())->toContain(
         'authorization_id',
@@ -52,13 +56,13 @@ it('has paid scope that filters paid payments', function () {
     $paidPayments = CreditCardRecurringPayment::paid()->get();
 
     expect($paidPayments)->toHaveCount(2);
-    expect($paidPayments->every(fn($payment) => $payment->status === 'Paid'))->toBeTrue();
+    expect($paidPayments->every(fn ($payment) => $payment->status === 'Paid'))->toBeTrue();
 });
 
 it('has authorization relationship', function () {
     $payment = CreditCardRecurringPayment::factory()->make();
 
-    expect($payment->authorization())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class);
+    expect($payment->authorization())->toBeInstanceOf(BelongsTo::class);
 });
 
 it('can retrieve authorization through relationship', function () {
@@ -76,8 +80,8 @@ it('casts dates correctly', function () {
 
     $payment->refresh();
 
-    expect($payment->created_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
-        ->and($payment->updated_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($payment->created_at)->toBeInstanceOf(Carbon::class)
+        ->and($payment->updated_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('can store payment message', function () {

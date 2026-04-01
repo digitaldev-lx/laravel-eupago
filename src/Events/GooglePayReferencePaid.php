@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use DigitaldevLx\LaravelEupago\Models\GooglePayReference;
@@ -12,29 +14,11 @@ class GooglePayReferencePaid
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * The GooglePayReference reference object.
-     *
-     * @var GooglePayReference
-     */
-    public $reference;
+    public function __construct(
+        public readonly GooglePayReference $reference,
+    ) {}
 
-    /**
-     * GooglePayReferencePaid constructor.
-     *
-     * @param GooglePayReference $reference
-     */
-    public function __construct(GooglePayReference $reference)
-    {
-        $this->reference = $reference;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

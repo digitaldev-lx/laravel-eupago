@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use DigitaldevLx\LaravelEupago\Models\ApplePayReference;
@@ -12,29 +14,11 @@ class ApplePayReferencePaid
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * The ApplePayReference reference object.
-     *
-     * @var ApplePayReference
-     */
-    public $reference;
+    public function __construct(
+        public readonly ApplePayReference $reference,
+    ) {}
 
-    /**
-     * ApplePayReferencePaid constructor.
-     *
-     * @param ApplePayReference $reference
-     */
-    public function __construct(ApplePayReference $reference)
-    {
-        $this->reference = $reference;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

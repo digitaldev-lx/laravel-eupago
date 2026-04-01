@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Events\MBReferenceCreated;
 use DigitaldevLx\LaravelEupago\Events\MBReferenceCreationFailed;
 use DigitaldevLx\LaravelEupago\MB\MB;
@@ -34,13 +36,14 @@ it('creates MB reference successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB {
+    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!$referenceData['sucesso']) {
+            if (! $referenceData['sucesso']) {
                 $this->addError($referenceData['estado'], $referenceData['resposta']);
                 event(new MBReferenceCreationFailed($this->errors, []));
             } else {
@@ -86,13 +89,14 @@ it('handles MB reference creation failure', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB {
+    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!$referenceData['sucesso']) {
+            if (! $referenceData['sucesso']) {
                 $this->addError($referenceData['estado'], $referenceData['resposta']);
                 event(new MBReferenceCreationFailed($this->errors, []));
             }
@@ -133,7 +137,8 @@ it('handles MB reference creation failure', function () {
 it('builds correct parameters for API request', function () {
     config(['eupago.api_key' => 'test-key']);
 
-    $mb = new class(100.00, 'ORDER-123', '2024-01-01', '2024-01-07', 50.00, 150.00, true) extends MB {
+    $mb = new class(100.00, 'ORDER-123', '2024-01-01', '2024-01-07', 50.00, 150.00, true) extends MB
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -156,7 +161,8 @@ it('builds correct parameters for API request', function () {
 });
 
 it('maps API response keys correctly', function () {
-    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB {
+    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB
+    {
         public function mappedReferenceKeys(array $data): array
         {
             return parent::mappedReferenceKeys($data);
@@ -193,7 +199,8 @@ it('maps API response keys correctly', function () {
 });
 
 it('handles missing keys in API response gracefully', function () {
-    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB {
+    $mb = new class(100.00, 'ORDER-1', '2024-01-01', '2024-01-07', 100.00, 100.00) extends MB
+    {
         public function mappedReferenceKeys(array $data): array
         {
             return parent::mappedReferenceKeys($data);

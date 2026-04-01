@@ -1,17 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurrenceAuthorization;
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurringPayment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 it('can be instantiated', function () {
-    $authorization = new CreditCardRecurrenceAuthorization();
+    $authorization = new CreditCardRecurrenceAuthorization;
 
     expect($authorization)->toBeInstanceOf(Model::class);
 });
 
 it('has correct fillable attributes', function () {
-    $authorization = new CreditCardRecurrenceAuthorization();
+    $authorization = new CreditCardRecurrenceAuthorization;
 
     expect($authorization->getFillable())->toContain(
         'subscription_id',
@@ -54,7 +59,7 @@ it('has authorized scope that filters authorized authorizations', function () {
     $authorizedAuthorizations = CreditCardRecurrenceAuthorization::authorized()->get();
 
     expect($authorizedAuthorizations)->toHaveCount(2);
-    expect($authorizedAuthorizations->every(fn($auth) => $auth->status === 'Authorized'))->toBeTrue();
+    expect($authorizedAuthorizations->every(fn ($auth) => $auth->status === 'Authorized'))->toBeTrue();
 });
 
 it('has pending scope that filters pending authorizations', function () {
@@ -65,7 +70,7 @@ it('has pending scope that filters pending authorizations', function () {
     $pendingAuthorizations = CreditCardRecurrenceAuthorization::pending()->get();
 
     expect($pendingAuthorizations)->toHaveCount(2);
-    expect($pendingAuthorizations->every(fn($auth) => $auth->status === 'Pending'))->toBeTrue();
+    expect($pendingAuthorizations->every(fn ($auth) => $auth->status === 'Pending'))->toBeTrue();
 });
 
 it('has polymorphic creditcardrecurrable relationship', function () {
@@ -74,13 +79,13 @@ it('has polymorphic creditcardrecurrable relationship', function () {
         'creditcardrecurrable_id' => null,
     ]);
 
-    expect($authorization->creditcardrecurrable())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphTo::class);
+    expect($authorization->creditcardrecurrable())->toBeInstanceOf(MorphTo::class);
 });
 
 it('has recurring payments relationship', function () {
     $authorization = CreditCardRecurrenceAuthorization::factory()->create();
 
-    expect($authorization->recurringPayments())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+    expect($authorization->recurringPayments())->toBeInstanceOf(HasMany::class);
 });
 
 it('can retrieve recurring payments through relationship', function () {
@@ -99,8 +104,8 @@ it('casts dates correctly', function () {
 
     $authorization->refresh();
 
-    expect($authorization->created_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
-        ->and($authorization->updated_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($authorization->created_at)->toBeInstanceOf(Carbon::class)
+        ->and($authorization->updated_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('can store redirect URL', function () {

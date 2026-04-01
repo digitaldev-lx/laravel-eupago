@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\MBWay;
 
 use DigitaldevLx\LaravelEupago\EuPago;
@@ -9,108 +11,29 @@ use GuzzleHttp\Client;
 
 class MBWay extends EuPago
 {
-    /**
-     * The unique resource identifier.
-     */
-    const URI = '/clientes/rest_api/mbway/create';
+    public const string URI = '/clientes/rest_api/mbway/create';
+
+    public function __construct(
+        protected readonly float $value,
+        protected readonly int $id,
+        protected readonly string $alias,
+        protected readonly ?string $description = null,
+    ) {}
 
     /**
-     * The payment value.
-     *
-     * @var float
+     * @return array<string, mixed>
      */
-    protected $value;
-
-    /**
-     * External identifier. Ex: the order id.
-     *
-     * @var int
-     */
-    protected $id;
-
-    /**
-     * The client's MB Way phone number.
-     *
-     * @var string
-     */
-    protected $alias;
-
-    /**
-     * Additional info.
-     *
-     * @var string
-     */
-    protected $description;
-
-    /**
-     * The errors stored during the operations.
-     *
-     * @var array
-     */
-    protected $errors = [];
-
-    /**
-     * MBWay constructor.
-     *
-     * @param float $value
-     * @param int $id
-     * @param string $alias
-     * @param string|null $description
-     */
-    public function __construct(float $value, int $id, string $alias, ?string $description = null)
-    {
-        $this->value       = $value;
-        $this->id          = $id;
-        $this->alias       = $alias;
-        $this->description = $description;
-    }
-
-    /**
-     * Returns the errors.
-     *
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * Adds an error to the bag.
-     *
-     * @param $code
-     * @param $message
-     */
-    protected function addError($code, $message)
-    {
-        $this->errors[$code] = html_entity_decode($message);
-    }
-
-    /**
-     * Determines whether errors are logged.
-     *
-     * @return bool
-     */
-    public function hasErrors()
-    {
-        return count($this->errors) > 0;
-    }
-
-    /**
-     * Generates a new MBWay reference.
-     *
-     * @return mixed
-     */
-    public function create()
+    public function create(): array
     {
         $client = new Client(['base_uri' => $this->getBaseUri()]);
 
         $response = $client->post(self::URI, $this->getParams());
 
+        /** @var array<string, mixed> $referenceData */
         $referenceData = json_decode($response->getBody()->getContents(), true);
 
-        if (!$referenceData['sucesso']) {
-            $this->addError($referenceData['estado'], $referenceData['resposta']);
+        if (! $referenceData['sucesso']) {
+            $this->addError((string) $referenceData['estado'], (string) $referenceData['resposta']);
 
             event(new MBWayReferenceCreationFailed(
                 $this->errors,
@@ -129,10 +52,8 @@ class MBWay extends EuPago
     }
 
     /**
-     * Maps the reference data keys.
-     *
-     * @param array $referenceData
-     * @return array
+     * @param  array<string, mixed>  $referenceData
+     * @return array<string, mixed>
      */
     protected function mappedReferenceKeys(array $referenceData): array
     {
@@ -147,9 +68,7 @@ class MBWay extends EuPago
     }
 
     /**
-     * Returns the required params for making a request.
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function getParams(): array
     {
@@ -160,7 +79,7 @@ class MBWay extends EuPago
                 'id' => $this->id,
                 'alias' => $this->alias,
                 'descricao' => $this->description,
-            ]
+            ],
         ];
     }
 }

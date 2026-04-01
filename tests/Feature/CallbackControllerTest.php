@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Events\ApplePayReferencePaid;
 use DigitaldevLx\LaravelEupago\Events\CallbackReceived;
 use DigitaldevLx\LaravelEupago\Events\CreditCardReferencePaid;
@@ -25,7 +27,7 @@ it('processes MB reference payment callback successfully', function () {
         'state' => 0,
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 100.00,
         'canal' => 'demo',
         'referencia' => '123456789',
@@ -57,7 +59,7 @@ it('processes MBWay reference payment callback successfully', function () {
         'state' => 0,
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 50.00,
         'canal' => 'demo',
         'referencia' => '987654321',
@@ -82,7 +84,7 @@ it('processes MBWay reference payment callback successfully', function () {
 });
 
 it('returns 404 when MB reference not found', function () {
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 100.00,
         'canal' => 'demo',
         'referencia' => '999999999',
@@ -103,7 +105,7 @@ it('returns 404 when MB reference not found', function () {
 });
 
 it('returns 404 when MBWay reference not found', function () {
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 50.00,
         'canal' => 'demo',
         'referencia' => '111111111',
@@ -127,7 +129,7 @@ it('does not update already paid reference', function () {
         'transaction_id' => 'ORIGINAL_TRX',
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 100.00,
         'canal' => 'demo',
         'referencia' => '123456789',
@@ -148,7 +150,7 @@ it('does not update already paid reference', function () {
 });
 
 it('validates callback with wrong API key', function () {
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 100.00,
         'canal' => 'demo',
         'referencia' => '123456789',
@@ -166,7 +168,7 @@ it('validates callback with wrong API key', function () {
 });
 
 it('validates callback with wrong channel', function () {
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 100.00,
         'canal' => 'wrong-channel',
         'referencia' => '123456789',
@@ -190,7 +192,7 @@ it('processes Credit Card payment callback successfully', function () {
         'state' => 0,
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 250.00,
         'canal' => 'demo',
         'referencia' => 'CC-123456789',
@@ -216,7 +218,7 @@ it('processes Credit Card payment callback successfully', function () {
 });
 
 it('returns 404 when Credit Card reference not found', function () {
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 250.00,
         'canal' => 'demo',
         'referencia' => 'CC-999999999',
@@ -243,7 +245,7 @@ it('does not update already paid Credit Card reference', function () {
         'callback_transaction_id' => 'ORIGINAL_CC_TRX',
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 250.00,
         'canal' => 'demo',
         'referencia' => 'CC-123456789',
@@ -270,7 +272,7 @@ it('processes Google Pay payment callback successfully', function () {
         'state' => 0,
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 350.00,
         'canal' => 'demo',
         'referencia' => 'GP-123456789',
@@ -296,7 +298,7 @@ it('processes Google Pay payment callback successfully', function () {
 });
 
 it('returns 404 when Google Pay reference not found', function () {
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 350.00,
         'canal' => 'demo',
         'referencia' => 'GP-999999999',
@@ -323,7 +325,7 @@ it('does not update already paid Google Pay reference', function () {
         'callback_transaction_id' => 'ORIGINAL_GP_TRX',
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 350.00,
         'canal' => 'demo',
         'referencia' => 'GP-123456789',
@@ -350,7 +352,7 @@ it('processes Apple Pay payment callback successfully', function () {
         'state' => 0,
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 450.00,
         'canal' => 'demo',
         'referencia' => 'AP-123456789',
@@ -376,7 +378,7 @@ it('processes Apple Pay payment callback successfully', function () {
 });
 
 it('returns 404 when Apple Pay reference not found', function () {
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 450.00,
         'canal' => 'demo',
         'referencia' => 'AP-999999999',
@@ -403,7 +405,7 @@ it('does not update already paid Apple Pay reference', function () {
         'callback_transaction_id' => 'ORIGINAL_AP_TRX',
     ]);
 
-    $response = $this->get('/eupago/callback?' . http_build_query([
+    $response = $this->get('/eupago/callback?'.http_build_query([
         'valor' => 450.00,
         'canal' => 'demo',
         'referencia' => 'AP-123456789',

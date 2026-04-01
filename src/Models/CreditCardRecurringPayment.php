@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Models;
 
 use DigitaldevLx\LaravelEupago\Database\Factories\CreditCardRecurringPaymentFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CreditCardRecurringPayment extends Model
 {
+    /** @use HasFactory<CreditCardRecurringPaymentFactory> */
     use HasFactory;
 
-    /**
-     * @inheritdoc
-     */
+    /** @var list<string> */
     protected $fillable = [
         'authorization_id',
         'transaction_id',
@@ -23,52 +26,16 @@ class CreditCardRecurringPayment extends Model
         'message',
     ];
 
-    /**
-     * @inheritDoc
-     */
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Scopes a query to only include paid payments.
-     *
-     * @param $query
-     * @return mixed
-     */
-    public function scopePaid($query)
+    /** @param  Builder<self>  $query
+     *  @return Builder<self> */
+    public function scopePaid(Builder $query): Builder
     {
         return $query->where('status', 'Paid');
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get the authorization for this recurring payment.
-     */
-    public function authorization()
+    /** @return BelongsTo<CreditCardRecurrenceAuthorization, $this> */
+    public function authorization(): BelongsTo
     {
         return $this->belongsTo(CreditCardRecurrenceAuthorization::class, 'authorization_id');
-    }
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory()
-    {
-        return CreditCardRecurringPaymentFactory::new();
     }
 }

@@ -1,0 +1,37 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Trait DigitaldevLx\\LaravelEupago\\Traits\\Applepayable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/Applepayable.php
+
+		-
+			message: '#^Trait DigitaldevLx\\LaravelEupago\\Traits\\Creditcardable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/Creditcardable.php
+
+		-
+			message: '#^Trait DigitaldevLx\\LaravelEupago\\Traits\\Creditcardrecurrable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/Creditcardrecurrable.php
+
+		-
+			message: '#^Trait DigitaldevLx\\LaravelEupago\\Traits\\Googlepayable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/Googlepayable.php
+
+		-
+			message: '#^Trait DigitaldevLx\\LaravelEupago\\Traits\\Mbable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/Mbable.php
+
+		-
+			message: '#^Trait DigitaldevLx\\LaravelEupago\\Traits\\Mbwayable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/Mbwayable.php

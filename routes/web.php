@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Http\Controllers\CallbackController;
-use DigitaldevLx\LaravelEupago\Http\Controllers\MBController;
-use DigitaldevLx\LaravelEupago\Http\Controllers\MBWayController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,4 +12,3 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('callback', [CallbackController::class, 'callback'])->name('callback');
-

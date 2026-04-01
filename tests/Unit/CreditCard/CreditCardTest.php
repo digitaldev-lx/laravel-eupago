@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\CreditCard\CreditCard;
 use DigitaldevLx\LaravelEupago\Events\CreditCardReferenceCreated;
 use DigitaldevLx\LaravelEupago\Events\CreditCardReferenceCreationFailed;
@@ -28,20 +30,14 @@ it('creates Credit Card reference successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $creditCard = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'test@example.com'
-    ) extends CreditCard {
+    $creditCard = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'test@example.com') extends CreditCard
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
+            if (! isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
                 $errorMessage = $referenceData['message'] ?? 'Unknown error';
                 $this->addError('error', $errorMessage);
                 event(new CreditCardReferenceCreationFailed($this->errors, []));
@@ -90,20 +86,14 @@ it('handles Credit Card reference creation failure', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $creditCard = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'test@example.com'
-    ) extends CreditCard {
+    $creditCard = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'test@example.com') extends CreditCard
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
+            if (! isset($referenceData['transactionStatus']) || $referenceData['transactionStatus'] !== 'Success') {
                 $errorMessage = $referenceData['message'] ?? 'Unknown error';
                 $this->addError('error', $errorMessage);
                 event(new CreditCardReferenceCreationFailed($this->errors, []));
@@ -142,18 +132,8 @@ it('handles Credit Card reference creation failure', function () {
 it('builds correct parameters for API request', function () {
     config(['eupago.api_key' => 'test-api-key']);
 
-    $creditCard = new class(
-        150.00,
-        'ORDER-456',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'customer@example.com',
-        'EN',
-        'EUR',
-        true,
-        60
-    ) extends CreditCard {
+    $creditCard = new class(150.00, 'ORDER-456', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'customer@example.com', 'EN', 'EUR', true, 60) extends CreditCard
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -188,14 +168,8 @@ it('builds correct parameters for API request', function () {
 it('builds parameters without optional minutesFormUp', function () {
     config(['eupago.api_key' => 'test-api-key']);
 
-    $creditCard = new class(
-        100.00,
-        'ORDER-789',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'test@example.com'
-    ) extends CreditCard {
+    $creditCard = new class(100.00, 'ORDER-789', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'test@example.com') extends CreditCard
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -208,14 +182,8 @@ it('builds parameters without optional minutesFormUp', function () {
 });
 
 it('maps API response keys correctly', function () {
-    $creditCard = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'test@example.com'
-    ) extends CreditCard {
+    $creditCard = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'test@example.com') extends CreditCard
+    {
         public function mappedReferenceKeys(array $data): array
         {
             return parent::mappedReferenceKeys($data);
@@ -241,14 +209,8 @@ it('maps API response keys correctly', function () {
 });
 
 it('handles missing keys in API response gracefully', function () {
-    $creditCard = new class(
-        100.00,
-        'ORDER-1',
-        'https://example.com/success',
-        'https://example.com/fail',
-        'https://example.com/back',
-        'test@example.com'
-    ) extends CreditCard {
+    $creditCard = new class(100.00, 'ORDER-1', 'https://example.com/success', 'https://example.com/fail', 'https://example.com/back', 'test@example.com') extends CreditCard
+    {
         public function mappedReferenceKeys(array $data): array
         {
             return parent::mappedReferenceKeys($data);

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Database\Factories;
 
-use DigitaldevLx\LaravelEupago\Models\CreditCardRecurringPayment;
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurrenceAuthorization;
+use DigitaldevLx\LaravelEupago\Models\CreditCardRecurringPayment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CreditCardRecurringPaymentFactory extends Factory

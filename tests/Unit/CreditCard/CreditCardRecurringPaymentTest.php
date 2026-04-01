@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\CreditCard\CreditCardRecurringPayment;
 use DigitaldevLx\LaravelEupago\Events\CreditCardRecurringPaymentCreated;
 use DigitaldevLx\LaravelEupago\Events\CreditCardRecurringPaymentFailed;
@@ -29,20 +31,14 @@ it('creates Credit Card Recurring Payment successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payment = new class(
-        'SUB-123',
-        100.00,
-        'ORDER-456',
-        'EUR',
-        'customer@example.com',
-        true
-    ) extends CreditCardRecurringPayment {
+    $payment = new class('SUB-123', 100.00, 'ORDER-456', 'EUR', 'customer@example.com', true) extends CreditCardRecurringPayment
+    {
         public function createWithClient(Client $client)
         {
-            $response = $client->post(self::URI . $this->subscriptionId, $this->getParams());
+            $response = $client->post(self::URI.$this->subscriptionId, $this->getParams());
             $responseData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
+            if (! isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
                 $errorMessage = $responseData['text'] ?? $responseData['message'] ?? 'Unknown error';
                 $errorCode = $responseData['code'] ?? 'error';
                 $this->addError($errorCode, $errorMessage);
@@ -99,17 +95,14 @@ it('handles Credit Card Recurring Payment creation failure', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payment = new class(
-        'SUB-123',
-        100.00,
-        'ORDER-456'
-    ) extends CreditCardRecurringPayment {
+    $payment = new class('SUB-123', 100.00, 'ORDER-456') extends CreditCardRecurringPayment
+    {
         public function createWithClient(Client $client)
         {
-            $response = $client->post(self::URI . $this->subscriptionId, $this->getParams());
+            $response = $client->post(self::URI.$this->subscriptionId, $this->getParams());
             $responseData = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
+            if (! isset($responseData['transactionStatus']) || $responseData['transactionStatus'] !== 'Success') {
                 $errorMessage = $responseData['text'] ?? $responseData['message'] ?? 'Unknown error';
                 $errorCode = $responseData['code'] ?? 'error';
                 $this->addError($errorCode, $errorMessage);
@@ -149,14 +142,8 @@ it('handles Credit Card Recurring Payment creation failure', function () {
 it('builds correct parameters for API request with customer notification', function () {
     config(['eupago.api_key' => 'demo-f298-22a3-1cea-101']);
 
-    $payment = new class(
-        'SUB-789',
-        250.50,
-        'ORDER-999',
-        'EUR',
-        'customer@test.com',
-        true
-    ) extends CreditCardRecurringPayment {
+    $payment = new class('SUB-789', 250.50, 'ORDER-999', 'EUR', 'customer@test.com', true) extends CreditCardRecurringPayment
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -186,11 +173,8 @@ it('builds correct parameters for API request with customer notification', funct
 it('builds parameters without customer notification', function () {
     config(['eupago.api_key' => 'demo-f298-22a3-1cea-101']);
 
-    $payment = new class(
-        'SUB-789',
-        100.00,
-        'ORDER-999'
-    ) extends CreditCardRecurringPayment {
+    $payment = new class('SUB-789', 100.00, 'ORDER-999') extends CreditCardRecurringPayment
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -203,11 +187,8 @@ it('builds parameters without customer notification', function () {
 });
 
 it('maps API response keys correctly', function () {
-    $payment = new class(
-        'SUB-123',
-        100.00,
-        'ORDER-456'
-    ) extends CreditCardRecurringPayment {
+    $payment = new class('SUB-123', 100.00, 'ORDER-456') extends CreditCardRecurringPayment
+    {
         public function mappedResponseKeys(array $data): array
         {
             return parent::mappedResponseKeys($data);
@@ -235,11 +216,8 @@ it('maps API response keys correctly', function () {
 });
 
 it('handles missing keys in API response gracefully', function () {
-    $payment = new class(
-        'SUB-123',
-        100.00,
-        'ORDER-456'
-    ) extends CreditCardRecurringPayment {
+    $payment = new class('SUB-123', 100.00, 'ORDER-456') extends CreditCardRecurringPayment
+    {
         public function mappedResponseKeys(array $data): array
         {
             return parent::mappedResponseKeys($data);

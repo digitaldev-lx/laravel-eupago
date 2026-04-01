@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurrenceAuthorization;
 use DigitaldevLx\LaravelEupago\Traits\Creditcardrecurrable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -13,10 +16,12 @@ beforeEach(function () {
         $table->timestamps();
     });
 
-    $this->testModelClass = new class extends Model {
+    $this->testModelClass = new class extends Model
+    {
         use Creditcardrecurrable;
 
         protected $table = 'test_models';
+
         protected $guarded = [];
     };
 });
@@ -28,7 +33,7 @@ afterEach(function () {
 it('has creditCardRecurrenceAuthorizations relationship', function () {
     $model = $this->testModelClass::create(['name' => 'Test']);
 
-    expect($model->creditCardRecurrenceAuthorizations())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphMany::class);
+    expect($model->creditCardRecurrenceAuthorizations())->toBeInstanceOf(MorphMany::class);
 });
 
 it('can retrieve credit card recurrence authorizations through relationship', function () {

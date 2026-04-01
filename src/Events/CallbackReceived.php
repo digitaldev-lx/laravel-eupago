@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,37 +14,14 @@ class CallbackReceived
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * The callback data received.
-     *
-     * @var array
+     * @param  array<string, mixed>  $callbackData
      */
-    public $callbackData;
+    public function __construct(
+        public readonly array $callbackData,
+        public readonly string $paymentMethod,
+    ) {}
 
-    /**
-     * The payment method type.
-     *
-     * @var string
-     */
-    public $paymentMethod;
-
-    /**
-     * CallbackReceived constructor.
-     *
-     * @param array $callbackData
-     * @param string $paymentMethod
-     */
-    public function __construct(array $callbackData, string $paymentMethod)
-    {
-        $this->callbackData = $callbackData;
-        $this->paymentMethod = $paymentMethod;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

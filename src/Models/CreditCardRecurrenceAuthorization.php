@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Models;
 
 use DigitaldevLx\LaravelEupago\Database\Factories\CreditCardRecurrenceAuthorizationFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CreditCardRecurrenceAuthorization extends Model
 {
+    /** @use HasFactory<CreditCardRecurrenceAuthorizationFactory> */
     use HasFactory;
 
-    /**
-     * @inheritdoc
-     */
+    /** @var list<string> */
     protected $fillable = [
         'subscription_id',
         'reference_subs',
@@ -21,71 +25,29 @@ class CreditCardRecurrenceAuthorization extends Model
         'identifier',
     ];
 
-    /**
-     * @inheritDoc
-     */
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Scopes a query to only include authorized subscriptions.
-     *
-     * @param $query
-     * @return mixed
-     */
-    public function scopeAuthorized($query)
+    /** @param  Builder<self>  $query
+     *  @return Builder<self> */
+    public function scopeAuthorized(Builder $query): Builder
     {
         return $query->where('status', 'Authorized');
     }
 
-    /**
-     * Scopes a query to only include pending subscriptions.
-     *
-     * @param $query
-     * @return mixed
-     */
-    public function scopePending($query)
+    /** @param  Builder<self>  $query
+     *  @return Builder<self> */
+    public function scopePending(Builder $query): Builder
     {
         return $query->where('status', 'Pending');
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get the owning creditcardrecurrable model.
-     */
-    public function creditcardrecurrable()
+    /** @return MorphTo<Model, $this> */
+    public function creditcardrecurrable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /**
-     * Get the recurring payments for this authorization.
-     */
-    public function recurringPayments()
+    /** @return HasMany<CreditCardRecurringPayment, $this> */
+    public function recurringPayments(): HasMany
     {
         return $this->hasMany(CreditCardRecurringPayment::class, 'authorization_id');
-    }
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory()
-    {
-        return CreditCardRecurrenceAuthorizationFactory::new();
     }
 }

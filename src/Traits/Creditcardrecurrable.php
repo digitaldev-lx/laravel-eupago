@@ -1,37 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Traits;
 
 use DigitaldevLx\LaravelEupago\CreditCard\CreditCardRecurrence;
-use DigitaldevLx\LaravelEupago\CreditCard\CreditCardRecurringPayment;
+use DigitaldevLx\LaravelEupago\CreditCard\CreditCardRecurringPayment as CreditCardRecurringPaymentHandler;
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurrenceAuthorization;
+use DigitaldevLx\LaravelEupago\Models\CreditCardRecurringPayment;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Creditcardrecurrable
 {
-    /**
-     * Get all of the model's Credit Card Recurrence Authorizations.
-     */
-    public function creditCardRecurrenceAuthorizations()
+    /** @return MorphMany<CreditCardRecurrenceAuthorization, $this> */
+    public function creditCardRecurrenceAuthorizations(): MorphMany
     {
         return $this->morphMany(CreditCardRecurrenceAuthorization::class, 'creditcardrecurrable');
     }
 
     /**
-     * Creates a Credit Card Recurrence Authorization.
-     *
-     * @param string $identifier
-     * @return array|CreditCardRecurrenceAuthorization
-     * @throws \Exception
+     * @return array<string|int, string>|CreditCardRecurrenceAuthorization
      */
-    public function createCreditCardRecurrenceAuthorization(string $identifier)
+    public function createCreditCardRecurrenceAuthorization(string $identifier): array|CreditCardRecurrenceAuthorization
     {
         $recurrence = new CreditCardRecurrence($identifier);
 
-        try {
-            $authorizationData = $recurrence->create();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $authorizationData = $recurrence->create();
 
         if ($recurrence->hasErrors()) {
             return $recurrence->getErrors();
@@ -47,16 +41,7 @@ trait Creditcardrecurrable
     }
 
     /**
-     * Creates a recurring payment using an existing authorization.
-     *
-     * @param CreditCardRecurrenceAuthorization $authorization
-     * @param float $value
-     * @param string $identifier
-     * @param string $currency
-     * @param string|null $customerEmail
-     * @param bool $customerNotify
-     * @return array|\DigitaldevLx\LaravelEupago\Models\CreditCardRecurringPayment
-     * @throws \Exception
+     * @return array<string|int, string>|CreditCardRecurringPayment
      */
     public function createRecurringPayment(
         CreditCardRecurrenceAuthorization $authorization,
@@ -64,9 +49,9 @@ trait Creditcardrecurrable
         string $identifier,
         string $currency = 'EUR',
         ?string $customerEmail = null,
-        bool $customerNotify = false
-    ) {
-        $recurringPayment = new CreditCardRecurringPayment(
+        bool $customerNotify = false,
+    ): array|CreditCardRecurringPayment {
+        $recurringPayment = new CreditCardRecurringPaymentHandler(
             $authorization->subscription_id,
             $value,
             $identifier,
@@ -75,11 +60,7 @@ trait Creditcardrecurrable
             $customerNotify
         );
 
-        try {
-            $paymentData = $recurringPayment->create();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $paymentData = $recurringPayment->create();
 
         if ($recurringPayment->hasErrors()) {
             return $recurringPayment->getErrors();

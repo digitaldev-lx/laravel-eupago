@@ -1,35 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Traits;
 
 use DigitaldevLx\LaravelEupago\CreditCard\CreditCard;
 use DigitaldevLx\LaravelEupago\Models\CreditCardReference;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Creditcardable
 {
-    /**
-     * Get all of the model's Credit Card references.
-     */
-    public function creditCardReferences()
+    /** @return MorphMany<CreditCardReference, $this> */
+    public function creditCardReferences(): MorphMany
     {
         return $this->morphMany(CreditCardReference::class, 'creditcardable');
     }
 
     /**
-     * Creates a Credit Card reference.
-     *
-     * @param float $value
-     * @param string $identifier
-     * @param string $successUrl
-     * @param string $failUrl
-     * @param string $backUrl
-     * @param string $customerEmail
-     * @param string $lang
-     * @param string $currency
-     * @param bool $customerNotify
-     * @param int|null $minutesFormUp
-     * @return array|CreditCardReference
-     * @throws \Exception
+     * @return array<string|int, string>|CreditCardReference
      */
     public function createCreditCardReference(
         float $value,
@@ -41,8 +29,8 @@ trait Creditcardable
         string $lang = 'PT',
         string $currency = 'EUR',
         bool $customerNotify = true,
-        ?int $minutesFormUp = null
-    ) {
+        ?int $minutesFormUp = null,
+    ): array|CreditCardReference {
         $creditCard = new CreditCard(
             $value,
             $identifier,
@@ -56,11 +44,7 @@ trait Creditcardable
             $minutesFormUp
         );
 
-        try {
-            $creditCardReferenceData = $creditCard->create();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $creditCardReferenceData = $creditCard->create();
 
         if ($creditCard->hasErrors()) {
             return $creditCard->getErrors();

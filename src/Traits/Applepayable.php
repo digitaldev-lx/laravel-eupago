@@ -1,38 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Traits;
 
 use DigitaldevLx\LaravelEupago\ApplePay\ApplePay;
 use DigitaldevLx\LaravelEupago\Models\ApplePayReference;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Applepayable
 {
-    /**
-     * Get all of the model's Apple Pay references.
-     */
-    public function applePayReferences()
+    /** @return MorphMany<ApplePayReference, $this> */
+    public function applePayReferences(): MorphMany
     {
         return $this->morphMany(ApplePayReference::class, 'applepayable');
     }
 
     /**
-     * Creates an Apple Pay reference.
-     *
-     * @param float $value
-     * @param string $identifier
-     * @param string $successUrl
-     * @param string $failUrl
-     * @param string $backUrl
-     * @param string $lang
-     * @param string $currency
-     * @param string|null $customerEmail
-     * @param string|null $customerFirstName
-     * @param string|null $customerLastName
-     * @param string|null $customerCountryCode
-     * @param bool $customerNotify
-     * @param int|null $minutesFormUp
-     * @return array|ApplePayReference
-     * @throws \Exception
+     * @return array<string|int, string>|ApplePayReference
      */
     public function createApplePayReference(
         float $value,
@@ -47,8 +32,8 @@ trait Applepayable
         ?string $customerLastName = null,
         ?string $customerCountryCode = null,
         bool $customerNotify = false,
-        ?int $minutesFormUp = null
-    ) {
+        ?int $minutesFormUp = null,
+    ): array|ApplePayReference {
         $applePay = new ApplePay(
             $value,
             $identifier,
@@ -65,11 +50,7 @@ trait Applepayable
             $minutesFormUp
         );
 
-        try {
-            $applePayReferenceData = $applePay->create();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $applePayReferenceData = $applePay->create();
 
         if ($applePay->hasErrors()) {
             return $applePay->getErrors();

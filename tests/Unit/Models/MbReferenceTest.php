@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\MbReference;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 it('can be instantiated', function () {
-    $reference = new MbReference();
+    $reference = new MbReference;
 
     expect($reference)->toBeInstanceOf(Model::class);
 });
 
 it('has correct fillable attributes', function () {
-    $reference = new MbReference();
+    $reference = new MbReference;
 
     expect($reference->getFillable())->toContain('entity', 'reference', 'value', 'state', 'transaction_id');
 });
@@ -48,7 +52,7 @@ it('has paid scope that filters paid references', function () {
     $paidReferences = MbReference::paid()->get();
 
     expect($paidReferences)->toHaveCount(2);
-    expect($paidReferences->every(fn($ref) => $ref->state === 1))->toBeTrue();
+    expect($paidReferences->every(fn ($ref) => $ref->state === 1))->toBeTrue();
 });
 
 it('has polymorphic mbable relationship', function () {
@@ -57,7 +61,7 @@ it('has polymorphic mbable relationship', function () {
         'mbable_id' => null,
     ]);
 
-    expect($reference->mbable())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphTo::class);
+    expect($reference->mbable())->toBeInstanceOf(MorphTo::class);
 });
 
 it('casts dates correctly', function () {
@@ -68,6 +72,6 @@ it('casts dates correctly', function () {
 
     $reference->refresh();
 
-    expect($reference->start_date)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
-        ->and($reference->end_date)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($reference->start_date)->toBeInstanceOf(Carbon::class)
+        ->and($reference->end_date)->toBeInstanceOf(Carbon::class);
 });

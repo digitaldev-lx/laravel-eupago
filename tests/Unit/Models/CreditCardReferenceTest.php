@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Models\CreditCardReference;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 it('can be instantiated', function () {
-    $reference = new CreditCardReference();
+    $reference = new CreditCardReference;
 
     expect($reference)->toBeInstanceOf(Model::class);
 });
 
 it('has correct fillable attributes', function () {
-    $reference = new CreditCardReference();
+    $reference = new CreditCardReference;
 
     expect($reference->getFillable())->toContain(
         'transaction_id',
@@ -51,7 +55,7 @@ it('has paid scope that filters paid references', function () {
     $paidReferences = CreditCardReference::paid()->get();
 
     expect($paidReferences)->toHaveCount(2);
-    expect($paidReferences->every(fn($ref) => $ref->state === 1))->toBeTrue();
+    expect($paidReferences->every(fn ($ref) => $ref->state === 1))->toBeTrue();
 });
 
 it('has polymorphic creditcardable relationship', function () {
@@ -60,7 +64,7 @@ it('has polymorphic creditcardable relationship', function () {
         'creditcardable_id' => null,
     ]);
 
-    expect($reference->creditcardable())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphTo::class);
+    expect($reference->creditcardable())->toBeInstanceOf(MorphTo::class);
 });
 
 it('casts dates correctly', function () {
@@ -68,8 +72,8 @@ it('casts dates correctly', function () {
 
     $reference->refresh();
 
-    expect($reference->created_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
-        ->and($reference->updated_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($reference->created_at)->toBeInstanceOf(Carbon::class)
+        ->and($reference->updated_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('can store redirect URL', function () {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use DigitaldevLx\LaravelEupago\Models\MbReference;
@@ -12,29 +14,11 @@ class MBReferencePaid
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * The MbReference reference object.
-     *
-     * @var MbReference
-     */
-    public $reference;
+    public function __construct(
+        public readonly MbReference $reference,
+    ) {}
 
-    /**
-     * MBReferencePaid constructor.
-     *
-     * @param MbReference $reference
-     */
-    public function __construct(MbReference $reference)
-    {
-        $this->reference = $reference;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

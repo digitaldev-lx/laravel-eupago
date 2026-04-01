@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurrenceAuthorization;
@@ -12,29 +14,11 @@ class CreditCardRecurrenceAuthorizationAuthorized
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * The CreditCardRecurrenceAuthorization object.
-     *
-     * @var CreditCardRecurrenceAuthorization
-     */
-    public $authorization;
+    public function __construct(
+        public readonly CreditCardRecurrenceAuthorization $authorization,
+    ) {}
 
-    /**
-     * CreditCardRecurrenceAuthorizationAuthorized constructor.
-     *
-     * @param CreditCardRecurrenceAuthorization $authorization
-     */
-    public function __construct(CreditCardRecurrenceAuthorization $authorization)
-    {
-        $this->authorization = $authorization;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }

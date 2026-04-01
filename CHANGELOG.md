@@ -2,6 +2,41 @@
 
 All notable changes to `laravel-eupago` will be documented in this file.
 
+## [3.0.0] - 2026-04-01
+
+### Added
+- Laravel 13 support
+- `PaymentMethod` backed string enum (`src/Enums/PaymentMethod.php`)
+- Laravel Pint for code style enforcement (`pint.json`)
+- `composer lint` and `composer lint:check` scripts
+
+### Changed
+- **BREAKING**: Minimum PHP version raised to 8.4
+- **BREAKING**: Removed `opcodesio/log-viewer` production dependency (install separately if needed)
+- **BREAKING**: Event properties are now `readonly`
+- **BREAKING**: Unknown payment methods in callbacks now throw `ValueError` instead of silently succeeding
+- PHPStan raised from level 5 to level 6
+- Constructor promotion with `readonly` in all payment classes and events
+- Error handling extracted to `EuPago` base class (removed duplication from 9 classes)
+- `CallbackController` refactored with `match` expression and `PaymentMethod` enum
+- Callback logging moved from `rules()` to `passedValidation()` in `CallbackRequest`
+- Models use typed return types for relationships and scopes
+- `RouteServiceProvider` uses class-based routing
+- Base `Controller` simplified (removed unused traits)
+- `declare(strict_types=1)` in all PHP files
+- Orchestra Testbench updated to support v11.0
+
+### Removed
+- PHP 8.3 support
+- `opcodesio/log-viewer` production dependency
+- Redundant `created_at`/`updated_at` casts in models
+- Redundant `newFactory()` overrides in models
+- Redundant try/catch blocks that only re-threw exceptions
+- Duplicated error handling code across 9 payment classes
+
+### Fixed
+- Double semicolon in `EuPagoServiceProvider` namespace declaration
+
 ## [2.3.0] - 2026-01-16
 
 ### Added

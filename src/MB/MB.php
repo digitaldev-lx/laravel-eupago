@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\MB;
 
-use Carbon\Carbon;
 use DigitaldevLx\LaravelEupago\EuPago;
 use DigitaldevLx\LaravelEupago\Events\MBReferenceCreated;
 use DigitaldevLx\LaravelEupago\Events\MBReferenceCreationFailed;
@@ -10,140 +11,32 @@ use GuzzleHttp\Client;
 
 class MB extends EuPago
 {
-    /**
-     * The unique resource identifier.
-     */
-    const URI = '/clientes/rest_api/multibanco/create';
+    public const string URI = '/clientes/rest_api/multibanco/create';
+
+    public function __construct(
+        protected readonly float $value,
+        protected readonly string $id,
+        protected readonly string $startDate,
+        protected readonly string $endDate,
+        protected readonly float $minValue,
+        protected readonly float $maxValue,
+        protected readonly bool $allowDuplication = false,
+    ) {}
 
     /**
-     * The payment value.
-     *
-     * @var float
-     */
-    protected $value;
-
-    /**
-     * External identifier. Ex: the order id.
-     *
-     * @var string
-     */
-    protected $id;
-
-    /**
-     * The payment's start date limit.
-     *
-     * @var string
-     */
-    protected $startDate;
-
-    /**
-     * The payment's end date limit.
-     *
-     * @var string
-     */
-    protected $endDate;
-
-    /**
-     * The payment's min value.
-     *
-     * @var float
-     */
-    protected $minValue;
-
-    /**
-     * The payment's max value.
-     *
-     * @var float
-     */
-    protected $maxValue;
-
-    /**
-     * Indicates if duplicated payments are allowed.
-     *
-     * @var boolean
-     */
-    protected $allowDuplication;
-
-    /**
-     * The errors stored during the operations.
-     *
-     * @var array
-     */
-    protected $errors = [];
-
-    /**
-     * MB constructor.
-     *
-     * @param float $value
-     * @param string $id
-     * @param string $startDate
-     * @param string $endDate
-     * @param float $minValue
-     * @param float $maxValue
-     * @param bool $allowDuplication
-     */
-    public function __construct(float $value, string $id, string $startDate, string $endDate, float $minValue, float $maxValue, bool $allowDuplication = false)
-    {
-        $this->value            = $value;
-        $this->id               = $id;
-        $this->startDate        = $startDate;
-        $this->endDate          = $endDate;
-        $this->minValue         = $minValue;
-        $this->maxValue         = $maxValue;
-        $this->allowDuplication = $allowDuplication;
-    }
-
-    /**
-     * Returns the errors.
-     *
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * Adds an error to the bag.
-     *
-     * @param $code
-     * @param $message
-     */
-    protected function addError($code, $message)
-    {
-        $this->errors[$code] = html_entity_decode($message);
-    }
-
-    /**
-     * Determines whether errors are logged.
-     *
-     * @return bool
-     */
-    public function hasErrors()
-    {
-        return count($this->errors) > 0;
-    }
-
-    /**
-     * Generates a new MBWay reference.
-     *
-     * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array<string, mixed>
      */
     public function create(): array
     {
         $client = new Client(['base_uri' => $this->getBaseUri()]);
 
-        try {
-            $response = $client->post(self::URI, $this->getParams());
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $response = $client->post(self::URI, $this->getParams());
 
+        /** @var array<string, mixed> $referenceData */
         $referenceData = json_decode($response->getBody()->getContents(), true);
 
-        if (!$referenceData['sucesso']) {
-            $this->addError($referenceData['estado'], $referenceData['resposta']);
+        if (! $referenceData['sucesso']) {
+            $this->addError((string) $referenceData['estado'], (string) $referenceData['resposta']);
 
             event(new MBReferenceCreationFailed(
                 $this->errors,
@@ -163,10 +56,8 @@ class MB extends EuPago
     }
 
     /**
-     * Maps the reference data keys.
-     *
-     * @param array $referenceData
-     * @return array
+     * @param  array<string, mixed>  $referenceData
+     * @return array<string, mixed>
      */
     protected function mappedReferenceKeys(array $referenceData): array
     {
@@ -185,9 +76,7 @@ class MB extends EuPago
     }
 
     /**
-     * Returns the required params for making a request.
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function getParams(): array
     {
@@ -201,7 +90,7 @@ class MB extends EuPago
                 'valor_minimo' => $this->minValue,
                 'valor_maximo' => $this->maxValue,
                 'per_dup' => $this->allowDuplication,
-            ]
+            ],
         ];
     }
 }

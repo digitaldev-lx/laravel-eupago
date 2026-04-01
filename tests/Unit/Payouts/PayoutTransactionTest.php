@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Payouts\PayoutTransaction;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -38,11 +40,8 @@ it('lists payout transactions successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payoutTransaction = new class(
-        '2024-01-15',
-        '2024-01-16',
-        'test-bearer-token'
-    ) extends PayoutTransaction {
+    $payoutTransaction = new class('2024-01-15', '2024-01-16', 'test-bearer-token') extends PayoutTransaction
+    {
         public function listWithClient(Client $client)
         {
             $response = $client->get(self::URI, $this->getParams());
@@ -90,11 +89,8 @@ it('handles transaction listing failure with invalid token', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payoutTransaction = new class(
-        '2024-01-15',
-        '2024-01-16',
-        'invalid-bearer-token'
-    ) extends PayoutTransaction {
+    $payoutTransaction = new class('2024-01-15', '2024-01-16', 'invalid-bearer-token') extends PayoutTransaction
+    {
         public function listWithClient(Client $client)
         {
             $response = $client->get(self::URI, $this->getParams());
@@ -136,11 +132,8 @@ it('handles transaction listing failure with invalid token', function () {
 });
 
 it('builds correct parameters for API request', function () {
-    $payoutTransaction = new class(
-        '2024-01-01',
-        '2024-01-31',
-        'test-bearer-token-456'
-    ) extends PayoutTransaction {
+    $payoutTransaction = new class('2024-01-01', '2024-01-31', 'test-bearer-token-456') extends PayoutTransaction
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -170,11 +163,8 @@ it('handles empty transactions list', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payoutTransaction = new class(
-        '2024-01-15',
-        '2024-01-16',
-        'test-bearer-token'
-    ) extends PayoutTransaction {
+    $payoutTransaction = new class('2024-01-15', '2024-01-16', 'test-bearer-token') extends PayoutTransaction
+    {
         public function listWithClient(Client $client)
         {
             $response = $client->get(self::URI, $this->getParams());
@@ -200,11 +190,8 @@ it('handles empty transactions list', function () {
 });
 
 it('uses same date for single day query', function () {
-    $payoutTransaction = new class(
-        '2024-01-15',
-        '2024-01-15',
-        'test-bearer-token'
-    ) extends PayoutTransaction {
+    $payoutTransaction = new class('2024-01-15', '2024-01-15', 'test-bearer-token') extends PayoutTransaction
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -233,11 +220,8 @@ it('handles different payment methods in transactions', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $payoutTransaction = new class(
-        '2024-01-01',
-        '2024-01-31',
-        'test-bearer-token'
-    ) extends PayoutTransaction {
+    $payoutTransaction = new class('2024-01-01', '2024-01-31', 'test-bearer-token') extends PayoutTransaction
+    {
         public function listWithClient(Client $client)
         {
             $response = $client->get(self::URI, $this->getParams());

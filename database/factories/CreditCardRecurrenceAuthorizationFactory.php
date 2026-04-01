@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Database\Factories;
 
 use DigitaldevLx\LaravelEupago\Models\CreditCardRecurrenceAuthorization;

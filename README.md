@@ -9,24 +9,17 @@ A comprehensive Laravel package for integrating with the EuPago payment gateway 
 
 ## Requirements
 
-| Release |      PHP       |   Laravel   |
-|---------|:--------------:|:-----------:|
-| 2.3.0   | 8.3 \|\| 8.4   | 11 \|\| 12  |
-| 2.2.0   |     >= 8.3     |     11      |
-| 2.1.0   |     >= 8.1     |     10      |
-
-> **Note:** Laravel 11 and 12 have different application structures compared to Laravel 10. This documentation provides version-specific instructions where applicable (e.g., event listeners, scheduling).
+| Release |    PHP    |       Laravel       |
+|---------|:---------:|:-------------------:|
+| 3.0.0   |  >= 8.4   | 11 \|\| 12 \|\| 13  |
+| 2.3.0   | 8.3, 8.4  |    11 \|\| 12       |
+| 2.2.0   |  >= 8.3   |         11          |
+| 2.1.0   |  >= 8.1   |         10          |
 
 ## Installation
 
-Install the PHP dependency in Laravel 11:
 ```bash
 composer require digitaldev-lx/laravel-eupago
-```
-
-Install in Laravel 10:
-```bash
-composer require digitaldev-lx/laravel-eupago:2.1.0
 ```
 
 Publish the migration
@@ -594,10 +587,20 @@ composer test:coverage
 vendor/bin/pest tests/Unit/MB/MBTest.php
 ```
 
+### Code Style
+
+```bash
+# Fix code style with Pint
+composer lint
+
+# Check code style without fixing
+composer lint:check
+```
+
 ### Static Analysis
 
 ```bash
-# Run Larastan Level 5 analysis
+# Run Larastan Level 6 analysis
 composer analyse
 ```
 

@@ -1,63 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Models;
 
 use DigitaldevLx\LaravelEupago\Database\Factories\MbwayReferenceFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MbwayReference extends Model
 {
+    /** @use HasFactory<MbwayReferenceFactory> */
     use HasFactory;
-    /**
-     * @inheritdoc
-     */
+
+    /** @var list<string> */
     protected $fillable = [
         'reference',
         'value',
         'alias',
         'state',
-        'transaction_id'
+        'transaction_id',
     ];
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Scopes a query to only include paid references.
-     *
-     * @param $query
-     * @return mixed
-     */
-    public function scopePaid($query)
+    /** @param  Builder<self>  $query
+     *  @return Builder<self> */
+    public function scopePaid(Builder $query): Builder
     {
         return $query->where('state', 1);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get the owning mbwayable model.
-     */
-    public function mbwayable()
+    /** @return MorphTo<Model, $this> */
+    public function mbwayable(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory()
-    {
-        return MbwayReferenceFactory::new();
     }
 }

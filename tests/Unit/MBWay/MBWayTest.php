@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DigitaldevLx\LaravelEupago\Events\MBWayReferenceCreated;
 use DigitaldevLx\LaravelEupago\Events\MBWayReferenceCreationFailed;
 use DigitaldevLx\LaravelEupago\MBWay\MBWay;
@@ -30,13 +32,14 @@ it('creates MBWay reference successfully', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $mbway = new class(50.00, 1, '+351912345678', 'Test payment') extends MBWay {
+    $mbway = new class(50.00, 1, '+351912345678', 'Test payment') extends MBWay
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!$referenceData['sucesso']) {
+            if (! $referenceData['sucesso']) {
                 $this->addError($referenceData['estado'], $referenceData['resposta']);
                 event(new MBWayReferenceCreationFailed($this->errors, []));
             } else {
@@ -82,13 +85,14 @@ it('handles MBWay reference creation failure', function () {
     $handlerStack = HandlerStack::create($mock);
     $client = new Client(['handler' => $handlerStack]);
 
-    $mbway = new class(50.00, 1, 'invalid', null) extends MBWay {
+    $mbway = new class(50.00, 1, 'invalid', null) extends MBWay
+    {
         public function createWithClient(Client $client)
         {
             $response = $client->post(self::URI, $this->getParams());
             $referenceData = json_decode($response->getBody()->getContents(), true);
 
-            if (!$referenceData['sucesso']) {
+            if (! $referenceData['sucesso']) {
                 $this->addError($referenceData['estado'], $referenceData['resposta']);
                 event(new MBWayReferenceCreationFailed($this->errors, []));
             }
@@ -129,7 +133,8 @@ it('handles MBWay reference creation failure', function () {
 it('builds correct parameters for MBWay API request', function () {
     config(['eupago.api_key' => 'test-key']);
 
-    $mbway = new class(75.50, 123, '+351999888777', 'Test description') extends MBWay {
+    $mbway = new class(75.50, 123, '+351999888777', 'Test description') extends MBWay
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -151,7 +156,8 @@ it('builds correct parameters for MBWay API request', function () {
 it('handles null description parameter', function () {
     config(['eupago.api_key' => 'test-key']);
 
-    $mbway = new class(50.00, 1, '+351912345678', null) extends MBWay {
+    $mbway = new class(50.00, 1, '+351912345678', null) extends MBWay
+    {
         public function getParams(): array
         {
             return parent::getParams();
@@ -164,7 +170,8 @@ it('handles null description parameter', function () {
 });
 
 it('maps MBWay API response keys correctly', function () {
-    $mbway = new class(50.00, 1, '+351912345678', null) extends MBWay {
+    $mbway = new class(50.00, 1, '+351912345678', null) extends MBWay
+    {
         public function mappedReferenceKeys(array $data): array
         {
             return parent::mappedReferenceKeys($data);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     'errors' => [
@@ -8,6 +10,6 @@ return [
         '-8' => 'Invalid reference',
         '-9' => 'Incorrect values',
         '-10' => 'Invalid API key',
-    ]
+    ],
 
 ];

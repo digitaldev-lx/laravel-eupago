@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Tests;
 
 use DigitaldevLx\LaravelEupago\Providers\EuPagoServiceProvider;
@@ -13,24 +15,27 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'DigitaldevLx\\LaravelEupago\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName): string => 'DigitaldevLx\\LaravelEupago\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
-    protected function getPackageProviders($app)
+    /**
+     * @return array<int, class-string>
+     */
+    protected function getPackageProviders($app): array
     {
         return [
             EuPagoServiceProvider::class,
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
         config()->set('database.default', 'testing');
         config()->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         config()->set('eupago.env', 'test');
@@ -38,14 +43,14 @@ class TestCase extends Orchestra
         config()->set('eupago.channel', 'demo');
     }
 
-    protected function defineDatabaseMigrations()
+    protected function defineDatabaseMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
-    protected function defineRoutes($router)
+    protected function defineRoutes($router): void
     {
-        $router->group(['prefix' => 'eupago'], function ($router) {
+        $router->group(['prefix' => 'eupago'], function ($router): void {
             require __DIR__.'/../routes/web.php';
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DigitaldevLx\LaravelEupago\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,28 +14,13 @@ class MBReferenceCreated
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * The reference data returned from API.
-     *
-     * @var array
+     * @param  array<string, mixed>  $referenceData
      */
-    public $referenceData;
+    public function __construct(
+        public readonly array $referenceData,
+    ) {}
 
-    /**
-     * MBReferenceCreated constructor.
-     *
-     * @param array $referenceData
-     */
-    public function __construct(array $referenceData)
-    {
-        $this->referenceData = $referenceData;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
+    public function broadcastOn(): PrivateChannel
     {
         return new PrivateChannel(config('eupago.channel'));
     }
