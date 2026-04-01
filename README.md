@@ -474,9 +474,9 @@ The package dispatches events throughout the payment lifecycle.
 
 ### Listening to Events
 
-**Laravel 13 (Automatic Discovery):**
+**Auto-discovery (recommended):**
 
-Create a listener class in `app/Listeners/` — Laravel will discover it automatically via the type-hinted `handle()` method:
+Create a listener class in `app/Listeners/` — Laravel automatically discovers it via the type-hinted `handle()` method:
 
 ```php
 // app/Listeners/HandleMBPayment.php
@@ -491,10 +491,8 @@ class HandleMBPayment
     {
         $reference = $event->reference;
 
-        // Update order status
         $reference->mbable->update(['status' => 'paid']);
 
-        // Send confirmation email
         Mail::to($reference->mbable->user)->send(
             new \App\Mail\PaymentConfirmed($reference)
         );
@@ -504,9 +502,9 @@ class HandleMBPayment
 
 No manual registration needed. Laravel scans `app/Listeners/` automatically.
 
-**Laravel 11 & 12:**
+**Manual registration:**
 
-Register event listeners in your `app/Providers/AppServiceProvider.php`:
+Register listeners in your `app/Providers/AppServiceProvider.php`:
 
 ```php
 use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
@@ -514,38 +512,23 @@ use Illuminate\Support\Facades\Event;
 
 public function boot(): void
 {
-    Event::listen(function (MBReferencePaid $event) {
-        $reference = $event->reference;
-
-        // Update order status
-        $reference->mbable->update(['status' => 'paid']);
-
-        // Send confirmation email
-        Mail::to($reference->mbable->user)->send(
-            new PaymentConfirmed($reference)
-        );
-    });
+    Event::listen(
+        MBReferencePaid::class,
+        SendPaymentConfirmationEmail::class,
+    );
 }
 ```
 
-Or create dedicated listener classes and register them:
+**Closure listeners:**
 
 ```php
-// app/Listeners/SendPaymentConfirmationEmail.php
-namespace App\Listeners;
-
 use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
+use Illuminate\Support\Facades\Event;
 
-class SendPaymentConfirmationEmail
-{
-    public function handle(MBReferencePaid $event): void
-    {
-        // Send email logic
-    }
-}
-
-// In AppServiceProvider.php boot method:
-Event::listen(MBReferencePaid::class, SendPaymentConfirmationEmail::class);
+Event::listen(function (MBReferencePaid $event) {
+    $reference = $event->reference;
+    $reference->mbable->update(['status' => 'paid']);
+});
 ```
 
 ## Commands
