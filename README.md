@@ -474,6 +474,36 @@ The package dispatches events throughout the payment lifecycle.
 
 ### Listening to Events
 
+**Laravel 13 (Automatic Discovery):**
+
+Create a listener class in `app/Listeners/` — Laravel will discover it automatically via the type-hinted `handle()` method:
+
+```php
+// app/Listeners/HandleMBPayment.php
+namespace App\Listeners;
+
+use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
+use Illuminate\Support\Facades\Mail;
+
+class HandleMBPayment
+{
+    public function handle(MBReferencePaid $event): void
+    {
+        $reference = $event->reference;
+
+        // Update order status
+        $reference->mbable->update(['status' => 'paid']);
+
+        // Send confirmation email
+        Mail::to($reference->mbable->user)->send(
+            new \App\Mail\PaymentConfirmed($reference)
+        );
+    }
+}
+```
+
+No manual registration needed. Laravel scans `app/Listeners/` automatically.
+
 **Laravel 11 & 12:**
 
 Register event listeners in your `app/Providers/AppServiceProvider.php`:
@@ -516,23 +546,6 @@ class SendPaymentConfirmationEmail
 
 // In AppServiceProvider.php boot method:
 Event::listen(MBReferencePaid::class, SendPaymentConfirmationEmail::class);
-```
-
-**Laravel 10:**
-
-Register event listeners in your `app/Providers/EventServiceProvider.php`:
-
-```php
-use DigitaldevLx\LaravelEupago\Events\MBReferencePaid;
-use App\Listeners\SendPaymentConfirmationEmail;
-use App\Listeners\UpdateOrderStatus;
-
-protected $listen = [
-    MBReferencePaid::class => [
-        SendPaymentConfirmationEmail::class,
-        UpdateOrderStatus::class,
-    ],
-];
 ```
 
 ## Commands
